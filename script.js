@@ -1,3 +1,3 @@
 document.getElementById("btn").addEventListener("click", () => {
-  alert("It works! 🎉");
+  document.getElementById("message").textContent = "🎉 It works! Day 1 done!";
 });
