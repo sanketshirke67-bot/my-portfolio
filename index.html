@@ -1,21 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Day 2</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Portfolio | Sanket Shirke</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">Sanket</div>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <button id="theme-toggle" aria-label="Toggle dark/light mode">🌙</button>
+    </nav>
+  </header>
 
-    <div class="card">
-      <h1>Hello, I'm Learning Web Dev! 👋</h1>
-      <p>Every day I improve a little. Day 2 — better fonts and design.</p>
-      <button id="btn">Click Me</button>
-      <p id="message"></p>
-    </div>
+  <main>
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <h1>Hi, I'm <span>Sanket Shirke</span></h1>
+        <p>Aspiring Web Developer | Learning every day</p>
+        <button id="hero-btn">Explore My Work</button>
+      </div>
+    </section>
 
-    <script src="script.js"></script>
-  </body>
+    <!-- About Section -->
+    <section id="about" class="about">
+      <div class="container">
+        <h2>About Me</h2>
+        <div class="about-content">
+          <p>I'm a passionate learner on a journey to become a full-stack developer. I love building clean, responsive websites and solving real-world problems with code. Currently, I'm diving deep into HTML, CSS, JavaScript, and version control with Git & GitHub.</p>
+          <p>This portfolio is a living document of my progress – every day I add something new!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="projects">
+      <div class="container">
+        <h2>Projects</h2>
+        <div class="projects-grid">
+          <div class="project-card">
+            <h3>Day 1: Interactive Card</h3>
+            <p>A simple card with a click button – my first step into DOM manipulation.</p>
+            <a href="#" class="project-link">View Project →</a>
+          </div>
+          <div class="project-card">
+            <h3>Day 2: Styled Portfolio</h3>
+            <p>Added custom fonts, hover effects, and a clean design.</p>
+            <a href="#" class="project-link">View Project →</a>
+          </div>
+          <div class="project-card">
+            <h3>Day 3: Full Portfolio</h3>
+            <p>Navigation, sections, dark mode, and more – where I'm at now!</p>
+            <a href="#" class="project-link">View Project →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+      <div class="container">
+        <h2>Get In Touch</h2>
+        <form id="contact-form">
+          <input type="text" id="name" placeholder="Your Name" required />
+          <input type="email" id="email" placeholder="Your Email" required />
+          <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+          <button type="submit">Send Message</button>
+        </form>
+        <p id="form-feedback"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Sanket Shirke. Built with ❤️ for my learning journey.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
 </html>
