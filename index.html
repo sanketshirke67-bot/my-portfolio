@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Portfolio | Sanket Shirke</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,10 +15,19 @@
       <ul class="nav-links">
         <li><a href="#home">Home</a></li>
         <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
         <li><a href="#projects">Projects</a></li>
+        <li><a href="#daily-log">Daily Log</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
-      <button id="theme-toggle" aria-label="Toggle dark/light mode">🌙</button>
+      <div class="nav-buttons">
+        <button id="theme-toggle" aria-label="Toggle dark/light mode">🌙</button>
+        <div class="hamburger" id="hamburger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
     </nav>
   </header>
 
@@ -42,25 +52,108 @@
       </div>
     </section>
 
+    <!-- Skills Section -->
+    <section id="skills" class="skills">
+      <div class="container">
+        <h2>My Skills</h2>
+        <div class="skills-grid">
+          <div class="skill-card">
+            <i class="fab fa-html5"></i>
+            <h3>HTML5</h3>
+            <div class="skill-bar">
+              <div class="skill-progress" data-progress="90"></div>
+            </div>
+          </div>
+          <div class="skill-card">
+            <i class="fab fa-css3-alt"></i>
+            <h3>CSS3</h3>
+            <div class="skill-bar">
+              <div class="skill-progress" data-progress="85"></div>
+            </div>
+          </div>
+          <div class="skill-card">
+            <i class="fab fa-js"></i>
+            <h3>JavaScript</h3>
+            <div class="skill-bar">
+              <div class="skill-progress" data-progress="70"></div>
+            </div>
+          </div>
+          <div class="skill-card">
+            <i class="fab fa-git-alt"></i>
+            <h3>Git & GitHub</h3>
+            <div class="skill-bar">
+              <div class="skill-progress" data-progress="80"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Projects Section -->
     <section id="projects" class="projects">
       <div class="container">
-        <h2>Projects</h2>
+        <h2>My Projects</h2>
         <div class="projects-grid">
           <div class="project-card">
+            <i class="fas fa-code"></i>
             <h3>Day 1: Interactive Card</h3>
             <p>A simple card with a click button – my first step into DOM manipulation.</p>
-            <a href="#" class="project-link">View Project →</a>
+            <a href="#" class="project-link" target="_blank">View Project →</a>
           </div>
           <div class="project-card">
+            <i class="fas fa-palette"></i>
             <h3>Day 2: Styled Portfolio</h3>
             <p>Added custom fonts, hover effects, and a clean design.</p>
-            <a href="#" class="project-link">View Project →</a>
+            <a href="#" class="project-link" target="_blank">View Project →</a>
           </div>
           <div class="project-card">
+            <i class="fas fa-laptop-code"></i>
             <h3>Day 3: Full Portfolio</h3>
             <p>Navigation, sections, dark mode, and more – where I'm at now!</p>
-            <a href="#" class="project-link">View Project →</a>
+            <a href="#" class="project-link" target="_blank">View Project →</a>
+          </div>
+          <div class="project-card">
+            <i class="fas fa-rocket"></i>
+            <h3>Day 4: Enhanced Portfolio</h3>
+            <p>Skills, daily log, working contact form, scroll animations, and mobile menu.</p>
+            <a href="#" class="project-link" target="_blank">View Project →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Daily Learning Log -->
+    <section id="daily-log" class="daily-log">
+      <div class="container">
+        <h2>Daily Learning Log</h2>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-date">Day 1</div>
+            <div class="timeline-content">
+              <h3>HTML/CSS Basics</h3>
+              <p>Created a simple card, learned about flexbox and basic styling.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Day 2</div>
+            <div class="timeline-content">
+              <h3>Typography & Hover Effects</h3>
+              <p>Added Google Fonts, improved button animations, and color scheme.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Day 3</div>
+            <div class="timeline-content">
+              <h3>Full Portfolio Layout</h3>
+              <p>Built multi-section portfolio with dark mode toggle and smooth scroll.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Day 4</div>
+            <div class="timeline-content">
+              <h3>Advanced Features</h3>
+              <p>Added skills section, working contact form, scroll animations, mobile menu.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -70,10 +163,10 @@
     <section id="contact" class="contact">
       <div class="container">
         <h2>Get In Touch</h2>
-        <form id="contact-form">
-          <input type="text" id="name" placeholder="Your Name" required />
-          <input type="email" id="email" placeholder="Your Email" required />
-          <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+        <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+          <input type="text" id="name" name="name" placeholder="Your Name" required />
+          <input type="email" id="email" name="email" placeholder="Your Email" required />
+          <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
           <button type="submit">Send Message</button>
         </form>
         <p id="form-feedback"></p>
