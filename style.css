@@ -177,6 +177,22 @@ h2 {
   font-size: 1.1rem;
 }
 
+.resume-btn {
+  display: inline-block;
+  margin-top: 30px;
+  padding: 10px 24px;
+  background: #e94560;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+
+.resume-btn:hover {
+  transform: scale(1.05);
+}
+
 /* Skills Section */
 .skills-grid {
   display: grid;
@@ -232,6 +248,44 @@ body.light-mode .skill-bar {
   transition: width 1s ease;
 }
 
+.skill-percent {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e94560;
+}
+
+/* Stats */
+.stats {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 60px;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-item i {
+  font-size: 2rem;
+  color: #e94560;
+  margin-bottom: 10px;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  display: block;
+}
+
+.stat-item p {
+  margin-top: 5px;
+  font-size: 0.9rem;
+}
+
 /* Projects */
 .projects-grid {
   display: grid;
@@ -278,15 +332,116 @@ body.light-mode .project-card p {
   color: #555;
 }
 
-.project-link {
-  text-decoration: none;
-  color: #e94560;
+.project-detail-btn {
+  background: none;
+  border: 2px solid #e94560;
+  padding: 8px 20px;
+  border-radius: 8px;
   font-weight: 600;
-  transition: color 0.3s;
+  cursor: pointer;
+  transition: all 0.3s;
+  color: #e94560;
 }
 
-.project-link:hover {
-  color: #c73652;
+.project-detail-btn:hover {
+  background: #e94560;
+  color: white;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1001;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #1a1a2e;
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+}
+
+body.light-mode .modal-content {
+  background: #fff;
+  color: #1a1a2e;
+}
+
+.close-modal {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+#modal-link {
+  display: inline-block;
+  margin-top: 20px;
+  color: #e94560;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+#modal-link:hover {
+  text-decoration: underline;
+}
+
+/* Blog Section */
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.blog-card {
+  background: rgba(255,255,255,0.05);
+  padding: 25px;
+  border-radius: 16px;
+  transition: transform 0.3s;
+}
+
+body.light-mode .blog-card {
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.blog-card:hover {
+  transform: translateY(-5px);
+}
+
+.blog-card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  color: #e94560;
+}
+
+.blog-date {
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 15px;
+}
+
+.read-more {
+  display: inline-block;
+  margin-top: 15px;
+  color: #e94560;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.read-more:hover {
+  text-decoration: underline;
 }
 
 /* Daily Log Timeline */
@@ -490,4 +645,42 @@ body.light-mode footer {
 .fade-in.appear {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Back to top button */
+#back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #e94560;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.3s;
+  z-index: 1000;
+}
+#back-to-top:hover {
+  background: #c73652;
+}
+
+/* Typing effect */
+.typing-container {
+  min-height: 60px;
+  margin-bottom: 30px;
+}
+.typing-text {
+  font-size: 1.2rem;
+  color: #e94560;
+  font-weight: 600;
+  border-right: 2px solid #e94560;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
 }
