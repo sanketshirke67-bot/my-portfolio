@@ -1,20 +1,44 @@
-// Mobile menu toggle
+// ========== DAY 6 SCRIPT ==========
+// (Includes all previous features + new ones)
+
+// --- Preloader ---
+window.addEventListener('load', () => {
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    setTimeout(() => {
+      preloader.style.display = 'none';
+    }, 500);
+  }
+});
+
+// --- Scroll Progress Bar ---
+window.addEventListener('scroll', () => {
+  const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrolled = (winScroll / height) * 100;
+  const progressBar = document.getElementById('progress-bar');
+  if (progressBar) progressBar.style.width = scrolled + '%';
+});
+
+// --- Mobile Menu Toggle ---
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.querySelector('.nav-links');
 
-hamburger.addEventListener('click', () => {
-  hamburger.classList.toggle('active');
-  navLinks.classList.toggle('active');
-});
-
-document.querySelectorAll('.nav-links a').forEach(link => {
-  link.addEventListener('click', () => {
-    hamburger.classList.remove('active');
-    navLinks.classList.remove('active');
+if (hamburger && navLinks) {
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('active');
+    navLinks.classList.toggle('active');
   });
-});
 
-// Smooth scroll
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('active');
+      navLinks.classList.remove('active');
+    });
+  });
+}
+
+// --- Smooth Scroll ---
 document.querySelectorAll('.nav-links a, #hero-btn').forEach(anchor => {
   anchor.addEventListener('click', function(e) {
     if (this.getAttribute('href') && this.getAttribute('href').startsWith('#')) {
@@ -28,96 +52,102 @@ document.querySelectorAll('.nav-links a, #hero-btn').forEach(anchor => {
   });
 });
 
-// Dark/Light mode toggle
+// --- Dark/Light Mode Toggle ---
 const toggleBtn = document.getElementById('theme-toggle');
 const body = document.body;
 
 if (localStorage.getItem('theme') === 'light') {
   body.classList.add('light-mode');
-  toggleBtn.textContent = '☀️';
+  if (toggleBtn) toggleBtn.textContent = '☀️';
 }
 
-toggleBtn.addEventListener('click', () => {
-  body.classList.toggle('light-mode');
-  if (body.classList.contains('light-mode')) {
-    localStorage.setItem('theme', 'light');
-    toggleBtn.textContent = '☀️';
-  } else {
-    localStorage.setItem('theme', 'dark');
-    toggleBtn.textContent = '🌙';
-  }
-});
+if (toggleBtn) {
+  toggleBtn.addEventListener('click', () => {
+    body.classList.toggle('light-mode');
+    if (body.classList.contains('light-mode')) {
+      localStorage.setItem('theme', 'light');
+      toggleBtn.textContent = '☀️';
+    } else {
+      localStorage.setItem('theme', 'dark');
+      toggleBtn.textContent = '🌙';
+    }
+  });
+}
 
-// Contact form with Formspree
+// --- Contact Form with Formspree ---
 const contactForm = document.getElementById('contact-form');
 const formFeedback = document.getElementById('form-feedback');
 
-contactForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const name = document.getElementById('name').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const message = document.getElementById('message').value.trim();
+if (contactForm) {
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const message = document.getElementById('message').value.trim();
 
-  if (!name || !email || !message) {
-    formFeedback.textContent = "Please fill in all fields.";
-    formFeedback.style.color = '#ff6b6b';
-    setTimeout(() => formFeedback.textContent = '', 3000);
-    return;
-  }
+    if (!name || !email || !message) {
+      formFeedback.textContent = "Please fill in all fields.";
+      formFeedback.style.color = '#ff6b6b';
+      setTimeout(() => formFeedback.textContent = '', 3000);
+      return;
+    }
 
-  const formData = new FormData(contactForm);
-  const response = await fetch(contactForm.action, {
-    method: 'POST',
-    body: formData,
-    headers: { 'Accept': 'application/json' }
+    const formData = new FormData(contactForm);
+    const response = await fetch(contactForm.action, {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    });
+    if (response.ok) {
+      formFeedback.textContent = "Thanks! Your message has been sent.";
+      formFeedback.style.color = '#e94560';
+      contactForm.reset();
+    } else {
+      formFeedback.textContent = "Oops! Something went wrong. Please try again later.";
+      formFeedback.style.color = '#ff6b6b';
+    }
+    setTimeout(() => formFeedback.textContent = '', 5000);
   });
-  if (response.ok) {
-    formFeedback.textContent = "Thanks! Your message has been sent.";
-    formFeedback.style.color = '#e94560';
-    contactForm.reset();
-  } else {
-    formFeedback.textContent = "Oops! Something went wrong. Please try again later.";
-    formFeedback.style.color = '#ff6b6b';
-  }
-  setTimeout(() => formFeedback.textContent = '', 5000);
-});
-
-// Typing animation
-const typingText = document.querySelector('.typing-text');
-const phrases = [
-  "I build websites.",
-  "I love coding.",
-  "I learn every day.",
-  "Welcome to my portfolio!"
-];
-let phraseIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
-
-function typeEffect() {
-  const currentPhrase = phrases[phraseIndex];
-  if (isDeleting) {
-    typingText.textContent = currentPhrase.substring(0, charIndex - 1);
-    charIndex--;
-  } else {
-    typingText.textContent = currentPhrase.substring(0, charIndex + 1);
-    charIndex++;
-  }
-
-  if (!isDeleting && charIndex === currentPhrase.length) {
-    isDeleting = true;
-    setTimeout(typeEffect, 2000);
-  } else if (isDeleting && charIndex === 0) {
-    isDeleting = false;
-    phraseIndex = (phraseIndex + 1) % phrases.length;
-    setTimeout(typeEffect, 500);
-  } else {
-    setTimeout(typeEffect, isDeleting ? 50 : 100);
-  }
 }
-typeEffect();
 
-// Skill bar animation and percentage counter
+// --- Typing Animation ---
+const typingText = document.querySelector('.typing-text');
+if (typingText) {
+  const phrases = [
+    "I build websites.",
+    "I love coding.",
+    "I learn every day.",
+    "Welcome to my portfolio!"
+  ];
+  let phraseIndex = 0;
+  let charIndex = 0;
+  let isDeleting = false;
+
+  function typeEffect() {
+    const currentPhrase = phrases[phraseIndex];
+    if (isDeleting) {
+      typingText.textContent = currentPhrase.substring(0, charIndex - 1);
+      charIndex--;
+    } else {
+      typingText.textContent = currentPhrase.substring(0, charIndex + 1);
+      charIndex++;
+    }
+
+    if (!isDeleting && charIndex === currentPhrase.length) {
+      isDeleting = true;
+      setTimeout(typeEffect, 2000);
+    } else if (isDeleting && charIndex === 0) {
+      isDeleting = false;
+      phraseIndex = (phraseIndex + 1) % phrases.length;
+      setTimeout(typeEffect, 500);
+    } else {
+      setTimeout(typeEffect, isDeleting ? 50 : 100);
+    }
+  }
+  typeEffect();
+}
+
+// --- Skill Bar & Percentage Animation ---
 const skillProgressBars = document.querySelectorAll('.skill-progress');
 const skillPercentSpans = document.querySelectorAll('.skill-percent');
 
@@ -126,12 +156,11 @@ const observer = new IntersectionObserver((entries) => {
     if (entry.isIntersecting) {
       const progress = entry.target.getAttribute('data-progress');
       entry.target.style.width = progress + '%';
-      // Animate percentage numbers
       const parentCard = entry.target.closest('.skill-card');
       const percentSpan = parentCard.querySelector('.skill-percent');
       let currentPercent = 0;
       const targetPercent = parseInt(progress);
-      const increment = targetPercent / 50; // smooth increment
+      const increment = targetPercent / 50;
       const interval = setInterval(() => {
         if (currentPercent < targetPercent) {
           currentPercent += increment;
@@ -148,7 +177,7 @@ const observer = new IntersectionObserver((entries) => {
 
 skillProgressBars.forEach(bar => observer.observe(bar));
 
-// Stats counter
+// --- Stats Counter ---
 const statNumbers = document.querySelectorAll('.stat-number');
 const statObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -173,7 +202,31 @@ const statObserver = new IntersectionObserver((entries) => {
 
 statNumbers.forEach(stat => statObserver.observe(stat));
 
-// Project modal
+// --- Project Filtering ---
+const filterButtons = document.querySelectorAll('.filter-btn');
+const projectCards = document.querySelectorAll('.project-card');
+
+if (filterButtons.length) {
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Update active button
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filterValue = btn.getAttribute('data-filter');
+
+      projectCards.forEach(card => {
+        if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+}
+
+// --- Project Details Modal (from Day 5) ---
 const modal = document.getElementById('project-modal');
 const modalTitle = document.getElementById('modal-title');
 const modalDescription = document.getElementById('modal-description');
@@ -205,6 +258,11 @@ const projectDetails = {
     title: "Day 5: Advanced Portfolio",
     description: "Typing animation, project modals, blog section, count-up stats, back-to-top button, and more!",
     link: "#"
+  },
+  project6: {
+    title: "Day 6: Filter + Lightbox",
+    description: "Filterable projects, lightbox gallery, testimonials slider, scroll progress bar, preloader, and enhanced UI.",
+    link: "#"
   }
 };
 
@@ -213,7 +271,7 @@ document.querySelectorAll('.project-detail-btn').forEach(btn => {
     const projectCard = btn.closest('.project-card');
     const projectId = projectCard.getAttribute('data-project');
     const details = projectDetails[projectId];
-    if (details) {
+    if (details && modal) {
       modalTitle.textContent = details.title;
       modalDescription.textContent = details.description;
       modalLink.href = details.link;
@@ -222,9 +280,11 @@ document.querySelectorAll('.project-detail-btn').forEach(btn => {
   });
 });
 
-closeModal.addEventListener('click', () => {
-  modal.style.display = 'none';
-});
+if (closeModal) {
+  closeModal.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+}
 
 window.addEventListener('click', (e) => {
   if (e.target === modal) {
@@ -232,23 +292,104 @@ window.addEventListener('click', (e) => {
   }
 });
 
-// Back to top button
-const backToTopBtn = document.getElementById('back-to-top');
+// --- Lightbox Gallery ---
+const lightbox = document.getElementById('lightbox');
+const lightboxImg = document.getElementById('lightbox-img');
+const closeLightbox = document.querySelector('.close-lightbox');
 
-window.addEventListener('scroll', () => {
-  if (window.scrollY > 300) {
-    backToTopBtn.style.display = 'flex';
-  } else {
-    backToTopBtn.style.display = 'none';
+document.querySelectorAll('.lightbox-trigger').forEach(trigger => {
+  trigger.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const imgSrc = trigger.getAttribute('data-img');
+    if (lightboxImg) {
+      lightboxImg.src = imgSrc;
+      lightbox.style.display = 'flex';
+    }
+  });
+});
+
+if (closeLightbox) {
+  closeLightbox.addEventListener('click', () => {
+    lightbox.style.display = 'none';
+  });
+}
+
+window.addEventListener('click', (e) => {
+  if (e.target === lightbox) {
+    lightbox.style.display = 'none';
   }
 });
 
-backToTopBtn.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+// --- Testimonials Slider ---
+const testimonialContainer = document.querySelector('.testimonial-container');
+const testimonials = document.querySelectorAll('.testimonial');
+const prevBtn = document.querySelector('.prev-testimonial');
+const nextBtn = document.querySelector('.next-testimonial');
+const dotsContainer = document.querySelector('.testimonial-dots');
 
-// Scroll animations (fade-in)
-const fadeElements = document.querySelectorAll('section, .skill-card, .project-card, .timeline-item, .blog-card');
+let currentSlide = 0;
+const totalSlides = testimonials.length;
+
+if (testimonials.length && dotsContainer) {
+  // Create dots
+  for (let i = 0; i < totalSlides; i++) {
+    const dot = document.createElement('span');
+    dot.classList.add('dot');
+    if (i === 0) dot.classList.add('active');
+    dot.addEventListener('click', () => goToSlide(i));
+    dotsContainer.appendChild(dot);
+  }
+
+  function goToSlide(index) {
+    currentSlide = index;
+    const offset = -currentSlide * 100;
+    testimonialContainer.style.transform = `translateX(${offset}%)`;
+    updateDots();
+  }
+
+  function updateDots() {
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, i) => {
+      if (i === currentSlide) dot.classList.add('active');
+      else dot.classList.remove('active');
+    });
+  }
+
+  function nextSlide() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    goToSlide(currentSlide);
+  }
+
+  function prevSlide() {
+    currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+    goToSlide(currentSlide);
+  }
+
+  if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+  if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+  // Auto-slide (optional)
+  setInterval(nextSlide, 5000);
+}
+
+// --- Back to Top Button ---
+const backToTopBtn = document.getElementById('back-to-top');
+if (backToTopBtn) {
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.style.display = 'flex';
+    } else {
+      backToTopBtn.style.display = 'none';
+    }
+  });
+
+  backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+// --- Scroll Animations (Fade-in) ---
+const fadeElements = document.querySelectorAll('section, .skill-card, .project-card, .timeline-item, .blog-card, .testimonial');
 fadeElements.forEach(el => el.classList.add('fade-in'));
 
 const fadeObserver = new IntersectionObserver((entries) => {
