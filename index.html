@@ -18,6 +18,7 @@
         <li><a href="#skills">Skills</a></li>
         <li><a href="#projects">Projects</a></li>
         <li><a href="#blog">Blog</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
         <li><a href="#daily-log">Daily Log</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -33,8 +34,9 @@
   </header>
 
   <main>
-    <!-- Hero Section with Typing Effect -->
+    <!-- Hero Section with Particle Background -->
     <section id="home" class="hero">
+      <canvas id="particle-canvas"></canvas>
       <div class="hero-content">
         <h1>Hi, I'm <span>Sanket Shirke</span></h1>
         <div class="typing-container">
@@ -107,61 +109,22 @@
           </div>
           <div class="stat-item">
             <i class="fas fa-calendar-alt"></i>
-            <span class="stat-number" data-target="5">0</span>
+            <span class="stat-number" data-target="6">0</span>
             <p>Days of Learning</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Projects Section with Modal -->
+    <!-- Projects Section (Dynamic GitHub Repos) -->
     <section id="projects" class="projects">
       <div class="container">
-        <h2>My Projects</h2>
-        <div class="projects-grid">
-          <div class="project-card" data-project="project1">
-            <i class="fas fa-code"></i>
-            <h3>Day 1: Interactive Card</h3>
-            <p>A simple card with a click button – my first step into DOM manipulation.</p>
-            <button class="project-detail-btn">View Details</button>
-          </div>
-          <div class="project-card" data-project="project2">
-            <i class="fas fa-palette"></i>
-            <h3>Day 2: Styled Portfolio</h3>
-            <p>Added custom fonts, hover effects, and a clean design.</p>
-            <button class="project-detail-btn">View Details</button>
-          </div>
-          <div class="project-card" data-project="project3">
-            <i class="fas fa-laptop-code"></i>
-            <h3>Day 3: Full Portfolio</h3>
-            <p>Navigation, sections, dark mode, and more – where I'm at now!</p>
-            <button class="project-detail-btn">View Details</button>
-          </div>
-          <div class="project-card" data-project="project4">
-            <i class="fas fa-rocket"></i>
-            <h3>Day 4: Enhanced Portfolio</h3>
-            <p>Skills, daily log, working contact form, scroll animations, and mobile menu.</p>
-            <button class="project-detail-btn">View Details</button>
-          </div>
-          <div class="project-card" data-project="project5">
-            <i class="fas fa-star"></i>
-            <h3>Day 5: Advanced Portfolio</h3>
-            <p>Typing animation, modals, blog, GitHub API, count-up, back to top.</p>
-            <button class="project-detail-btn">View Details</button>
-          </div>
+        <h2>My GitHub Projects</h2>
+        <div id="github-projects" class="projects-grid">
+          <div class="loader">Loading projects from GitHub...</div>
         </div>
       </div>
     </section>
-
-    <!-- Project Modal (hidden initially) -->
-    <div id="project-modal" class="modal">
-      <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h3 id="modal-title"></h3>
-        <p id="modal-description"></p>
-        <a href="#" id="modal-link" target="_blank">View Live Demo →</a>
-      </div>
-    </div>
 
     <!-- Blog Section -->
     <section id="blog" class="blog">
@@ -186,6 +149,35 @@
             <p>Building in public keeps me accountable and helps others learn along the way...</p>
             <a href="#" class="read-more">Read More →</a>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Carousel -->
+    <section id="testimonials" class="testimonials">
+      <div class="container">
+        <h2>What People Say</h2>
+        <div class="carousel-container">
+          <div class="carousel-slide">
+            <div class="testimonial-card">
+              <i class="fas fa-quote-left"></i>
+              <p>"Sanket is incredibly dedicated and learns fast. His portfolio shows his growth every day!"</p>
+              <h4>— Jane Doe, Mentor</h4>
+            </div>
+            <div class="testimonial-card">
+              <i class="fas fa-quote-left"></i>
+              <p>"I'm impressed by the attention to detail and the clean code. Great work!"</p>
+              <h4>— John Smith, Developer</h4>
+            </div>
+            <div class="testimonial-card">
+              <i class="fas fa-quote-left"></i>
+              <p>"The dark mode toggle and animations make this portfolio stand out. Keep it up!"</p>
+              <h4>— Emily Chen, Designer</h4>
+            </div>
+          </div>
+          <button class="carousel-prev">❮</button>
+          <button class="carousel-next">❯</button>
+          <div class="carousel-dots"></div>
         </div>
       </div>
     </section>
@@ -230,11 +222,18 @@
               <p>Typing effect, project modals, blog section, count-up stats, back-to-top button.</p>
             </div>
           </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Day 6</div>
+            <div class="timeline-content">
+              <h3>Dynamic GitHub & Carousel</h3>
+              <p>Live GitHub repos, testimonials carousel, particle background, more polish.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Contact Section with Enhanced Validation -->
+    <!-- Contact Section -->
     <section id="contact" class="contact">
       <div class="container">
         <h2>Get In Touch</h2>

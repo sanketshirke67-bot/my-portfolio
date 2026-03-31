@@ -127,8 +127,6 @@ typeEffect();
 
 // Skill bar animation + percentage counter
 const skillProgressBars = document.querySelectorAll('.skill-progress');
-const skillPercentSpans = document.querySelectorAll('.skill-percent');
-
 const skillObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -152,7 +150,6 @@ const skillObserver = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.5 });
-
 skillProgressBars.forEach(bar => skillObserver.observe(bar));
 
 // Stats counter
@@ -177,71 +174,175 @@ const statObserver = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.5 });
-
 statNumbers.forEach(stat => statObserver.observe(stat));
 
-// Project modal
-const modal = document.getElementById('project-modal');
-const modalTitle = document.getElementById('modal-title');
-const modalDescription = document.getElementById('modal-description');
-const modalLink = document.getElementById('modal-link');
-const closeModal = document.querySelector('.close-modal');
+// ========== GITHUB PROJECTS FETCH ==========
+const githubUsername = 'sanketshirke67-bot'; // Replace with your GitHub username
+const projectsContainer = document.getElementById('github-projects');
 
-const projectDetails = {
-  project1: {
-    title: "Day 1: Interactive Card",
-    description: "A simple interactive card with a click button – my first step into DOM manipulation. Built with HTML, CSS, and JavaScript.",
-    link: "#"
-  },
-  project2: {
-    title: "Day 2: Styled Portfolio",
-    description: "Added custom Google Fonts, beautiful hover effects, and a clean modern design.",
-    link: "#"
-  },
-  project3: {
-    title: "Day 3: Full Portfolio",
-    description: "Created a complete multi-section portfolio with navigation, dark mode toggle, and smooth scrolling.",
-    link: "#"
-  },
-  project4: {
-    title: "Day 4: Enhanced Portfolio",
-    description: "Added skills section, daily learning log, working contact form with Formspree, scroll animations, and mobile menu.",
-    link: "#"
-  },
-  project5: {
-    title: "Day 5: Advanced Portfolio",
-    description: "Typing animation, project modals, blog section, count-up stats, back-to-top button, and more!",
-    link: "#"
+async function fetchGitHubRepos() {
+  try {
+    const response = await fetch(`https://api.github.com/users/${sanketshirke67-bot}/repos?sort=updated&per_page=6`);
+    if (!response.ok) throw new Error('GitHub API error');
+    const repos = await response.json();
+    displayRepos(repos);
+  } catch (error) {
+    projectsContainer.innerHTML = '<div class="loader">Failed to load GitHub projects. Please check your username or try again later.</div>';
   }
-};
+}
 
-document.querySelectorAll('.project-detail-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const projectCard = btn.closest('.project-card');
-    const projectId = projectCard.getAttribute('data-project');
-    const details = projectDetails[projectId];
-    if (details) {
-      modalTitle.textContent = details.title;
-      modalDescription.textContent = details.description;
-      modalLink.href = details.link;
-      modal.style.display = 'flex';
-    }
+function displayRepos(repos) {
+  if (!repos.length) {
+    projectsContainer.innerHTML = '<div class="loader">No public repositories found.</div>';
+    return;
+  }
+  projectsContainer.innerHTML = '';
+  repos.forEach(repo => {
+    const card = document.createElement('div');
+    card.classList.add('project-card');
+    card.innerHTML = `
+      <i class="fab fa-github"></i>
+      <h3>${repo.name}</h3>
+      <p>${repo.description || 'No description provided.'}</p>
+      <a href="${repo.html_url}" target="_blank">View on GitHub →</a>
+    `;
+    projectsContainer.appendChild(card);
   });
+}
+
+fetchGitHubRepos();
+
+// ========== TESTIMONIALS CAROUSEL ==========
+const slides = document.querySelectorAll('.testimonial-card');
+const slideContainer = document.querySelector('.carousel-slide');
+const prevBtn = document.querySelector('.carousel-prev');
+const nextBtn = document.querySelector('.carousel-next');
+const dotsContainer = document.querySelector('.carousel-dots');
+
+let currentIndex = 0;
+let slideInterval;
+
+function updateCarousel() {
+  const slideWidth = slides[0].clientWidth;
+  slideContainer.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+  updateDots();
+}
+
+function updateDots() {
+  const dots = document.querySelectorAll('.dot');
+  dots.forEach((dot, idx) => {
+    if (idx === currentIndex) dot.classList.add('active');
+    else dot.classList.remove('active');
+  });
+}
+
+function createDots() {
+  dotsContainer.innerHTML = '';
+  slides.forEach((_, idx) => {
+    const dot = document.createElement('span');
+    dot.classList.add('dot');
+    if (idx === currentIndex) dot.classList.add('active');
+    dot.addEventListener('click', () => {
+      clearInterval(slideInterval);
+      currentIndex = idx;
+      updateCarousel();
+      startAutoSlide();
+    });
+    dotsContainer.appendChild(dot);
+  });
+}
+
+function nextSlide() {
+  currentIndex = (currentIndex + 1) % slides.length;
+  updateCarousel();
+}
+
+function prevSlide() {
+  currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+  updateCarousel();
+}
+
+function startAutoSlide() {
+  slideInterval = setInterval(() => {
+    nextSlide();
+  }, 5000);
+}
+
+prevBtn.addEventListener('click', () => {
+  clearInterval(slideInterval);
+  prevSlide();
+  startAutoSlide();
+});
+nextBtn.addEventListener('click', () => {
+  clearInterval(slideInterval);
+  nextSlide();
+  startAutoSlide();
 });
 
-closeModal.addEventListener('click', () => {
-  modal.style.display = 'none';
+window.addEventListener('resize', () => {
+  updateCarousel();
 });
 
-window.addEventListener('click', (e) => {
-  if (e.target === modal) {
-    modal.style.display = 'none';
+createDots();
+startAutoSlide();
+
+// ========== PARTICLE BACKGROUND ==========
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 3 + 1;
+    this.speedX = (Math.random() - 0.5) * 1;
+    this.speedY = (Math.random() - 0.5) * 1;
+    this.color = `rgba(233, 69, 96, ${Math.random() * 0.5 + 0.2})`;
   }
-});
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.x < 0) this.x = canvas.width;
+    if (this.x > canvas.width) this.x = 0;
+    if (this.y < 0) this.y = canvas.height;
+    if (this.y > canvas.height) this.y = 0;
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+}
 
-// Back to top button
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < 100; i++) {
+    particles.push(new Particle());
+  }
+}
+initParticles();
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ========== BACK TO TOP ==========
 const backToTopBtn = document.getElementById('back-to-top');
-
 window.addEventListener('scroll', () => {
   if (window.scrollY > 300) {
     backToTopBtn.style.display = 'flex';
@@ -249,12 +350,11 @@ window.addEventListener('scroll', () => {
     backToTopBtn.style.display = 'none';
   }
 });
-
 backToTopBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-// Scroll animations (fade-in)
+// ========== SCROLL ANIMATIONS ==========
 const fadeElements = document.querySelectorAll('section, .skill-card, .project-card, .timeline-item, .blog-card');
 fadeElements.forEach(el => el.classList.add('fade-in'));
 
@@ -266,5 +366,4 @@ const fadeObserver = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.1 });
-
 fadeElements.forEach(el => fadeObserver.observe(el));
