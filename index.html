@@ -46,54 +46,57 @@
       </div>
     </section>
 
-    <!-- About Section -->
+    <!-- About Section (resume button removed) -->
     <section id="about" class="about">
       <div class="container">
         <h2>About Me</h2>
         <div class="about-content">
           <p>I'm a passionate learner on a journey to become a full-stack developer. I love building clean, responsive websites and solving real-world problems with code. Currently, I'm diving deep into HTML, CSS, JavaScript, and version control with Git & GitHub.</p>
           <p>This portfolio is a living document of my progress – every day I add something new!</p>
-          <a href="#" class="resume-btn" download>Download Resume (Sample)</a>
         </div>
       </div>
     </section>
 
-    <!-- Skills Section with Counters -->
+    <!-- Skills Section with Circular Progress -->
     <section id="skills" class="skills">
       <div class="container">
         <h2>My Skills</h2>
-        <div class="skills-grid">
+        <div class="skills-grid circular">
           <div class="skill-card">
+            <div class="circular-progress" data-progress="90">
+              <div class="inner-circle">
+                <span class="skill-percent">0%</span>
+              </div>
+            </div>
             <i class="fab fa-html5"></i>
             <h3>HTML5</h3>
-            <div class="skill-bar">
-              <div class="skill-progress" data-progress="90"></div>
-            </div>
-            <span class="skill-percent">0%</span>
           </div>
           <div class="skill-card">
+            <div class="circular-progress" data-progress="85">
+              <div class="inner-circle">
+                <span class="skill-percent">0%</span>
+              </div>
+            </div>
             <i class="fab fa-css3-alt"></i>
             <h3>CSS3</h3>
-            <div class="skill-bar">
-              <div class="skill-progress" data-progress="85"></div>
-            </div>
-            <span class="skill-percent">0%</span>
           </div>
           <div class="skill-card">
+            <div class="circular-progress" data-progress="70">
+              <div class="inner-circle">
+                <span class="skill-percent">0%</span>
+              </div>
+            </div>
             <i class="fab fa-js"></i>
             <h3>JavaScript</h3>
-            <div class="skill-bar">
-              <div class="skill-progress" data-progress="70"></div>
-            </div>
-            <span class="skill-percent">0%</span>
           </div>
           <div class="skill-card">
+            <div class="circular-progress" data-progress="80">
+              <div class="inner-circle">
+                <span class="skill-percent">0%</span>
+              </div>
+            </div>
             <i class="fab fa-git-alt"></i>
             <h3>Git & GitHub</h3>
-            <div class="skill-bar">
-              <div class="skill-progress" data-progress="80"></div>
-            </div>
-            <span class="skill-percent">0%</span>
           </div>
         </div>
         <div class="stats">
@@ -109,17 +112,28 @@
           </div>
           <div class="stat-item">
             <i class="fas fa-calendar-alt"></i>
-            <span class="stat-number" data-target="6">0</span>
+            <span class="stat-number" data-target="7">0</span>
             <p>Days of Learning</p>
+          </div>
+          <div class="stat-item">
+            <i class="fas fa-eye"></i>
+            <span class="stat-number" id="visitor-count">0</span>
+            <p>Visitors</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Projects Section (Dynamic GitHub Repos) -->
+    <!-- Projects Section with Filter -->
     <section id="projects" class="projects">
       <div class="container">
         <h2>My GitHub Projects</h2>
+        <div class="filter-buttons">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="JavaScript">JavaScript</button>
+          <button class="filter-btn" data-filter="HTML">HTML</button>
+          <button class="filter-btn" data-filter="CSS">CSS</button>
+        </div>
         <div id="github-projects" class="projects-grid">
           <div class="loader">Loading projects from GitHub...</div>
         </div>
@@ -229,15 +243,22 @@
               <p>Live GitHub repos, testimonials carousel, particle background, more polish.</p>
             </div>
           </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Day 7</div>
+            <div class="timeline-content">
+              <h3>EmailJS, Filter, Circular Skills, Visitor Counter</h3>
+              <p>Contact form with EmailJS, project language filter, circular skill indicators, live visitor count.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Contact Section -->
+    <!-- Contact Section with EmailJS (no Formspree) -->
     <section id="contact" class="contact">
       <div class="container">
         <h2>Get In Touch</h2>
-        <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <form id="contact-form">
           <input type="text" id="name" name="name" placeholder="Your Name" required />
           <input type="email" id="email" name="email" placeholder="Your Email" required />
           <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
@@ -254,6 +275,9 @@
 
   <!-- Back to Top Button -->
   <button id="back-to-top" title="Back to Top">↑</button>
+
+  <!-- EmailJS SDK -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
   <script src="script.js"></script>
 </body>
