@@ -3,12 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Portfolio | Sanket Shirke</title>
+  <title>Day 8 – Advanced Portfolio | Sanket Shirke</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Custom Cursor Elements -->
+  <div class="cursor"></div>
+  <div class="cursor-follower"></div>
+
   <header>
     <nav class="navbar">
       <div class="logo">Sanket</div>
@@ -46,7 +50,7 @@
       </div>
     </section>
 
-    <!-- About Section (resume button removed) -->
+    <!-- About Section -->
     <section id="about" class="about">
       <div class="container">
         <h2>About Me</h2>
@@ -112,7 +116,7 @@
           </div>
           <div class="stat-item">
             <i class="fas fa-calendar-alt"></i>
-            <span class="stat-number" data-target="7">0</span>
+            <span class="stat-number" data-target="8">0</span>
             <p>Days of Learning</p>
           </div>
           <div class="stat-item">
@@ -124,18 +128,24 @@
       </div>
     </section>
 
-    <!-- Projects Section with Filter -->
+    <!-- Projects Section with Search + Filter + Load More -->
     <section id="projects" class="projects">
       <div class="container">
         <h2>My GitHub Projects</h2>
-        <div class="filter-buttons">
-          <button class="filter-btn active" data-filter="all">All</button>
-          <button class="filter-btn" data-filter="JavaScript">JavaScript</button>
-          <button class="filter-btn" data-filter="HTML">HTML</button>
-          <button class="filter-btn" data-filter="CSS">CSS</button>
+        <div class="projects-controls">
+          <input type="text" id="project-search" placeholder="Search projects..." class="search-input" />
+          <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="JavaScript">JavaScript</button>
+            <button class="filter-btn" data-filter="HTML">HTML</button>
+            <button class="filter-btn" data-filter="CSS">CSS</button>
+          </div>
         </div>
         <div id="github-projects" class="projects-grid">
           <div class="loader">Loading projects from GitHub...</div>
+        </div>
+        <div class="load-more-container">
+          <button id="load-more-btn" class="load-more-btn" style="display: none;">Load More</button>
         </div>
       </div>
     </section>
@@ -250,11 +260,18 @@
               <p>Contact form with EmailJS, project language filter, circular skill indicators, live visitor count.</p>
             </div>
           </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Day 8</div>
+            <div class="timeline-content">
+              <h3>Load More, Search, Scroll Progress, Custom Cursor, Toasts</h3>
+              <p>Pagination for GitHub repos, search bar, scroll progress ring, custom cursor, toast notifications, system theme detection.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Contact Section with EmailJS (no Formspree) -->
+    <!-- Contact Section with EmailJS (toast notifications) -->
     <section id="contact" class="contact">
       <div class="container">
         <h2>Get In Touch</h2>
@@ -264,7 +281,7 @@
           <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
           <button type="submit">Send Message</button>
         </form>
-        <p id="form-feedback"></p>
+        <!-- form-feedback removed – using toast instead -->
       </div>
     </section>
   </main>
@@ -275,6 +292,18 @@
 
   <!-- Back to Top Button -->
   <button id="back-to-top" title="Back to Top">↑</button>
+
+  <!-- Scroll Progress Indicator -->
+  <div class="scroll-progress">
+    <svg class="progress-ring" width="60" height="60">
+      <circle class="progress-ring-circle-bg" stroke="#333" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
+      <circle class="progress-ring-circle" stroke="#e94560" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
+    </svg>
+    <div class="scroll-percent">0%</div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
 
   <!-- EmailJS SDK -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>

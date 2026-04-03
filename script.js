@@ -33,13 +33,22 @@ document.getElementById('hero-btn').addEventListener('click', () => {
   document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
 });
 
-// Dark/Light mode toggle
+// ==================== DARK/LIGHT MODE with System Preference ====================
 const toggleBtn = document.getElementById('theme-toggle');
 const body = document.body;
 
-if (localStorage.getItem('theme') === 'light') {
+// Check system preference
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+let savedTheme = localStorage.getItem('theme');
+if (!savedTheme) {
+  savedTheme = prefersDark ? 'dark' : 'light';
+}
+if (savedTheme === 'light') {
   body.classList.add('light-mode');
   toggleBtn.textContent = '☀️';
+} else {
+  body.classList.remove('light-mode');
+  toggleBtn.textContent = '🌙';
 }
 
 toggleBtn.addEventListener('click', () => {
@@ -88,7 +97,7 @@ function typeEffect() {
 }
 typeEffect();
 
-// ==================== STATS COUNTER (original) ====================
+// ==================== STATS COUNTER ====================
 const statNumbers = document.querySelectorAll('.stat-number:not(#visitor-count)');
 const statObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
@@ -119,7 +128,6 @@ const circularObserver = new IntersectionObserver((entries) => {
     if (entry.isIntersecting) {
       const progress = entry.target.getAttribute('data-progress');
       const percentSpan = entry.target.querySelector('.skill-percent');
-      // Animate the circle
       let currentPercent = 0;
       const targetPercent = parseInt(progress);
       const increment = targetPercent / 50;
@@ -128,7 +136,6 @@ const circularObserver = new IntersectionObserver((entries) => {
           currentPercent += increment;
           const percentVal = Math.min(Math.floor(currentPercent), targetPercent);
           percentSpan.textContent = percentVal + '%';
-          // Update conic gradient
           const deg = (percentVal / 100) * 360;
           entry.target.style.background = `conic-gradient(#e94560 ${deg}deg, ${body.classList.contains('light-mode') ? '#ddd' : '#333'} ${deg}deg)`;
         } else {
@@ -144,29 +151,56 @@ const circularObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 circularProgresses.forEach(progress => circularObserver.observe(progress));
 
-// ==================== GITHUB PROJECTS FETCH WITH FILTER ====================
-const githubUsername = 'sanketshirke67-bot'; // Replace with your GitHub username
+// ==================== GITHUB PROJECTS (with Load More & Search) ====================
+const githubUsername = 'sanketshirke67-bot'; // CHANGE TO YOUR USERNAME
 const projectsContainer = document.getElementById('github-projects');
 let allRepos = [];
+let displayedCount = 6;
+const loadMoreBtn = document.getElementById('load-more-btn');
+const searchInput = document.getElementById('project-search');
+let currentFilter = 'all';
+let currentSearch = '';
 
 async function fetchGitHubRepos() {
   try {
-    const response = await fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated&per_page=20`);
+    const response = await fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated&per_page=100`);
     if (!response.ok) throw new Error('GitHub API error');
     allRepos = await response.json();
-    displayRepos(allRepos);
+    displayedCount = 6;
+    applyFiltersAndRender();
   } catch (error) {
     projectsContainer.innerHTML = '<div class="loader">Failed to load GitHub projects. Please check your username or try again later.</div>';
   }
 }
 
-function displayRepos(repos) {
-  if (!repos.length) {
-    projectsContainer.innerHTML = '<div class="loader">No public repositories found.</div>';
+function filterReposByLanguage(repos, language) {
+  if (language === 'all') return repos;
+  return repos.filter(repo => repo.language === language);
+}
+
+function filterReposBySearch(repos, query) {
+  if (!query) return repos;
+  const lowerQuery = query.toLowerCase();
+  return repos.filter(repo => repo.name.toLowerCase().includes(lowerQuery) || 
+    (repo.description && repo.description.toLowerCase().includes(lowerQuery)));
+}
+
+function getFilteredRepos() {
+  let filtered = filterReposByLanguage(allRepos, currentFilter);
+  filtered = filterReposBySearch(filtered, currentSearch);
+  return filtered;
+}
+
+function renderProjects() {
+  const filtered = getFilteredRepos();
+  const toDisplay = filtered.slice(0, displayedCount);
+  if (toDisplay.length === 0) {
+    projectsContainer.innerHTML = '<div class="loader">No projects match your criteria.</div>';
+    loadMoreBtn.style.display = 'none';
     return;
   }
   projectsContainer.innerHTML = '';
-  repos.forEach(repo => {
+  toDisplay.forEach(repo => {
     const card = document.createElement('div');
     card.classList.add('project-card');
     card.setAttribute('data-language', repo.language || 'Unknown');
@@ -178,33 +212,44 @@ function displayRepos(repos) {
     `;
     projectsContainer.appendChild(card);
   });
+  if (filtered.length > displayedCount) {
+    loadMoreBtn.style.display = 'inline-block';
+  } else {
+    loadMoreBtn.style.display = 'none';
+  }
 }
 
-function filterProjects(language) {
-  const cards = document.querySelectorAll('.project-card');
-  cards.forEach(card => {
-    if (language === 'all' || card.getAttribute('data-language') === language) {
-      card.style.display = 'flex';
-    } else {
-      card.style.display = 'none';
-    }
-  });
+function applyFiltersAndRender() {
+  displayedCount = 6;
+  renderProjects();
 }
 
-// Filter button listeners
+function loadMore() {
+  const filtered = getFilteredRepos();
+  if (displayedCount < filtered.length) {
+    displayedCount += 6;
+    renderProjects();
+  }
+}
+
+// Filter buttons
 const filterBtns = document.querySelectorAll('.filter-btn');
 filterBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     filterBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    const filterValue = btn.getAttribute('data-filter');
-    if (filterValue === 'all') {
-      filterProjects('all');
-    } else {
-      filterProjects(filterValue);
-    }
+    currentFilter = btn.getAttribute('data-filter');
+    applyFiltersAndRender();
   });
 });
+
+// Search input
+searchInput.addEventListener('input', (e) => {
+  currentSearch = e.target.value;
+  applyFiltersAndRender();
+});
+
+loadMoreBtn.addEventListener('click', loadMore);
 
 fetchGitHubRepos();
 
@@ -350,6 +395,32 @@ backToTopBtn.addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
+// ==================== SCROLL PROGRESS INDICATOR ====================
+const progressCircle = document.querySelector('.progress-ring-circle');
+const scrollPercentSpan = document.querySelector('.scroll-percent');
+const radius = 26;
+const circumference = 2 * Math.PI * radius;
+progressCircle.style.strokeDasharray = `${circumference}`;
+progressCircle.style.strokeDashoffset = circumference;
+
+function setProgress(percent) {
+  const offset = circumference - (percent / 100) * circumference;
+  progressCircle.style.strokeDashoffset = offset;
+  scrollPercentSpan.textContent = `${Math.floor(percent)}%`;
+}
+
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const percent = (scrollTop / docHeight) * 100;
+  setProgress(percent);
+});
+
+// Click on progress to scroll to top
+document.querySelector('.scroll-progress').addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
 // ==================== SCROLL ANIMATIONS ====================
 const fadeElements = document.querySelectorAll('section, .skill-card, .project-card, .timeline-item, .blog-card');
 fadeElements.forEach(el => el.classList.add('fade-in'));
@@ -367,8 +438,7 @@ fadeElements.forEach(el => fadeObserver.observe(el));
 // ==================== VISITOR COUNTER ====================
 async function updateVisitorCount() {
   const visitorSpan = document.getElementById('visitor-count');
-  // Using countapi.xyz for demo (free, no signup)
-  const namespace = 'sanket_portfolio';
+  const namespace = 'sanket_portfolio_day8';
   const key = 'visitors';
   try {
     const response = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
@@ -381,6 +451,18 @@ async function updateVisitorCount() {
 }
 updateVisitorCount();
 
+// ==================== TOAST NOTIFICATION SYSTEM ====================
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.remove();
+  }, 4000);
+}
+
 // ==================== EMAILJS CONTACT FORM ====================
 // Initialize EmailJS with your public key (replace with yours)
 emailjs.init({
@@ -388,7 +470,6 @@ emailjs.init({
 });
 
 const contactForm = document.getElementById('contact-form');
-const formFeedback = document.getElementById('form-feedback');
 
 contactForm.addEventListener('submit', async (e) => {
   e.preventDefault();
@@ -397,33 +478,48 @@ contactForm.addEventListener('submit', async (e) => {
   const message = document.getElementById('message').value.trim();
 
   if (!name || !email || !message) {
-    formFeedback.textContent = "Please fill in all fields.";
-    formFeedback.style.color = '#ff6b6b';
-    setTimeout(() => formFeedback.textContent = '', 3000);
+    showToast('Please fill in all fields.', 'error');
     return;
   }
 
-  // Prepare template parameters (match your EmailJS template)
   const templateParams = {
     from_name: name,
     from_email: email,
     message: message,
-    to_name: 'Sanket', // Your name
+    to_name: 'Sanket',
   };
 
   try {
     const response = await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
     if (response.status === 200) {
-      formFeedback.textContent = "Message sent successfully! I'll get back to you soon.";
-      formFeedback.style.color = '#e94560';
+      showToast('Message sent successfully! I\'ll get back to you soon.', 'success');
       contactForm.reset();
     } else {
       throw new Error('EmailJS error');
     }
   } catch (error) {
     console.error('EmailJS error:', error);
-    formFeedback.textContent = "Oops! Failed to send. Please try again later.";
-    formFeedback.style.color = '#ff6b6b';
+    showToast('Oops! Failed to send. Please try again later.', 'error');
   }
-  setTimeout(() => formFeedback.textContent = '', 5000);
+});
+
+// ==================== CUSTOM CURSOR ====================
+const cursor = document.querySelector('.cursor');
+const cursorFollower = document.querySelector('.cursor-follower');
+
+document.addEventListener('mousemove', (e) => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+  cursorFollower.style.left = e.clientX + 'px';
+  cursorFollower.style.top = e.clientY + 'px';
+});
+
+// Hide cursor when leaving window
+document.addEventListener('mouseleave', () => {
+  cursor.style.display = 'none';
+  cursorFollower.style.display = 'none';
+});
+document.addEventListener('mouseenter', () => {
+  cursor.style.display = 'block';
+  cursorFollower.style.display = 'block';
 });

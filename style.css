@@ -1,8 +1,9 @@
-/* Base Styles (same as Day 5, keep all existing) */
+/* Base Styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  cursor: none; /* Hide default cursor for custom cursor */
 }
 
 body {
@@ -24,7 +25,40 @@ body.light-mode {
   color: #1a1a2e;
 }
 
-/* Navbar (unchanged) */
+/* Custom Cursor */
+.cursor, .cursor-follower {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transition: transform 0.1s ease;
+}
+.cursor {
+  width: 8px;
+  height: 8px;
+  background-color: #e94560;
+  transform: translate(-50%, -50%);
+}
+.cursor-follower {
+  width: 30px;
+  height: 30px;
+  border: 2px solid #e94560;
+  transform: translate(-50%, -50%);
+  transition: width 0.2s, height 0.2s, background 0.2s;
+}
+body.light-mode .cursor-follower {
+  border-color: #e94560;
+}
+/* Hover effect for interactive elements */
+a:hover ~ .cursor-follower,
+button:hover ~ .cursor-follower,
+.project-card:hover ~ .cursor-follower {
+  width: 40px;
+  height: 40px;
+  background: rgba(233, 69, 96, 0.2);
+}
+
+/* Navbar (unchanged from previous days) */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -92,7 +126,7 @@ body.light-mode .navbar {
   transition: 0.3s;
 }
 
-/* Hero Section with Canvas */
+/* Hero Section */
 .hero {
   height: 100vh;
   display: flex;
@@ -128,13 +162,18 @@ body.light-mode .hero {
 .hero-content h1 span {
   color: #e94560;
 }
-.hero-content p {
-  font-size: 1.2rem;
+.typing-container {
+  min-height: 60px;
   margin-bottom: 30px;
-  color: #ccc;
 }
-body.light-mode .hero-content p {
-  color: #444;
+.typing-text {
+  font-size: 1.2rem;
+  color: #e94560;
+  font-weight: 600;
+  border-right: 2px solid #e94560;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
 }
 #hero-btn {
   padding: 12px 32px;
@@ -171,26 +210,47 @@ h2 {
   text-align: center;
   font-size: 1.1rem;
 }
-.resume-btn {
-  display: inline-block;
-  margin-top: 30px;
-  padding: 10px 24px;
-  background: #e94560;
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: transform 0.2s;
-}
-.resume-btn:hover {
-  transform: scale(1.05);
-}
 
-/* Skills & Stats (unchanged) */
-.skills-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 30px;
+/* Skills Circular */
+.circular {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.circular-progress {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: conic-gradient(#e94560 0deg, #333 0deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+}
+body.light-mode .circular-progress {
+  background: conic-gradient(#e94560 0deg, #ddd 0deg);
+}
+.inner-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #1a1a2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+body.light-mode .inner-circle {
+  background: #fff;
+}
+.circular-progress .skill-percent {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #e94560;
+}
+.skill-card i {
+  margin-top: 10px;
 }
 .skill-card {
   text-align: center;
@@ -214,31 +274,8 @@ body.light-mode .skill-card {
 .skill-card h3 {
   margin-bottom: 15px;
 }
-.skill-bar {
-  width: 100%;
-  height: 8px;
-  background: #333;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-top: 10px;
-}
-body.light-mode .skill-bar {
-  background: #ddd;
-}
-.skill-progress {
-  height: 100%;
-  width: 0;
-  background: #e94560;
-  border-radius: 4px;
-  transition: width 1s ease;
-}
-.skill-percent {
-  display: inline-block;
-  margin-top: 10px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #e94560;
-}
+
+/* Stats */
 .stats {
   display: flex;
   justify-content: space-around;
@@ -264,17 +301,52 @@ body.light-mode .skill-bar {
   font-size: 0.9rem;
 }
 
-/* Projects Grid (for dynamic repos) */
+/* Projects Controls */
+.projects-controls {
+  margin-bottom: 30px;
+}
+.search-input {
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 20px;
+  padding: 12px 20px;
+  border-radius: 30px;
+  border: 1px solid #e94560;
+  background: rgba(255,255,255,0.1);
+  color: inherit;
+  font-family: 'Poppins', sans-serif;
+}
+body.light-mode .search-input {
+  background: #fff;
+  color: #1a1a2e;
+}
+.filter-buttons {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.filter-btn {
+  background: none;
+  border: 2px solid #e94560;
+  padding: 8px 20px;
+  margin: 0 10px;
+  border-radius: 30px;
+  color: #e94560;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.filter-btn.active,
+.filter-btn:hover {
+  background: #e94560;
+  color: white;
+}
+
+/* Projects Grid */
 .projects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
-}
-.loader {
-  text-align: center;
-  grid-column: 1 / -1;
-  padding: 40px;
-  font-size: 1.2rem;
 }
 .project-card {
   background: rgba(255,255,255,0.05);
@@ -323,7 +395,25 @@ body.light-mode .project-card p {
   color: #c73652;
 }
 
-/* Blog (unchanged) */
+.load-more-container {
+  text-align: center;
+  margin-top: 40px;
+}
+.load-more-btn {
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.load-more-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Blog */
 .blog-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -447,7 +537,7 @@ body.light-mode .testimonial-card {
   background-color: #e94560;
 }
 
-/* Daily Log Timeline (unchanged) */
+/* Daily Log Timeline */
 .timeline {
   position: relative;
   max-width: 800px;
@@ -522,7 +612,7 @@ body.light-mode .timeline-content {
   }
 }
 
-/* Contact Form (unchanged) */
+/* Contact Form */
 .contact form {
   max-width: 600px;
   margin: 0 auto;
@@ -557,11 +647,6 @@ body.light-mode .contact textarea {
 }
 .contact button:hover {
   background-color: #c73652;
-}
-#form-feedback {
-  text-align: center;
-  margin-top: 20px;
-  font-weight: 600;
 }
 
 /* Footer */
@@ -615,6 +700,11 @@ body.light-mode footer {
   h2 {
     font-size: 2rem;
   }
+  .filter-btn {
+    margin: 5px;
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
 }
 
 /* Scroll animations (fade-in) */
@@ -631,7 +721,7 @@ body.light-mode footer {
 /* Back to top button */
 #back-to-top {
   position: fixed;
-  bottom: 30px;
+  bottom: 100px;
   right: 30px;
   background: #e94560;
   color: white;
@@ -651,17 +741,77 @@ body.light-mode footer {
   background: #c73652;
 }
 
-/* Typing effect */
-.typing-container {
-  min-height: 60px;
-  margin-bottom: 30px;
+/* Scroll Progress Indicator */
+.scroll-progress {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  z-index: 1000;
+  cursor: pointer;
 }
-.typing-text {
-  font-size: 1.2rem;
+.progress-ring {
+  transform: rotate(-90deg);
+}
+.progress-ring-circle-bg {
+  stroke: #333;
+}
+body.light-mode .progress-ring-circle-bg {
+  stroke: #ddd;
+}
+.progress-ring-circle {
+  stroke-dasharray: 163.36; /* 2 * pi * r = 2 * 3.14 * 26 */
+  stroke-dashoffset: 163.36;
+  transition: stroke-dashoffset 0.1s;
+}
+.scroll-percent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  font-weight: bold;
   color: #e94560;
-  font-weight: 600;
-  border-right: 2px solid #e94560;
-  display: inline-block;
-  white-space: nowrap;
-  overflow: hidden;
+}
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.toast {
+  background: #1a1a2e;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border-left: 4px solid #e94560;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  font-size: 0.9rem;
+  animation: slideIn 0.3s ease;
+}
+body.light-mode .toast {
+  background: #fff;
+  color: #1a1a2e;
+}
+.toast.success {
+  border-left-color: #4caf50;
+}
+.toast.error {
+  border-left-color: #ff6b6b;
+}
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
