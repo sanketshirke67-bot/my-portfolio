@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Day 8 – Advanced Portfolio | Sanket Shirke</title>
+  <title>Day 9 – GitHub Activity | Sanket Shirke</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
@@ -21,6 +21,7 @@
         <li><a href="#about">About</a></li>
         <li><a href="#skills">Skills</a></li>
         <li><a href="#projects">Projects</a></li>
+        <li><a href="#github-activity">GitHub Activity</a></li>
         <li><a href="#blog">Blog</a></li>
         <li><a href="#testimonials">Testimonials</a></li>
         <li><a href="#daily-log">Daily Log</a></li>
@@ -116,7 +117,7 @@
           </div>
           <div class="stat-item">
             <i class="fas fa-calendar-alt"></i>
-            <span class="stat-number" data-target="8">0</span>
+            <span class="stat-number" data-target="9">0</span>
             <p>Days of Learning</p>
           </div>
           <div class="stat-item">
@@ -146,6 +147,57 @@
         </div>
         <div class="load-more-container">
           <button id="load-more-btn" class="load-more-btn" style="display: none;">Load More</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- NEW: GitHub Activity Section (PRs, Issues, Code Review Progress) -->
+    <section id="github-activity" class="github-activity">
+      <div class="container">
+        <h2>GitHub Activity</h2>
+        <div class="activity-grid">
+          <!-- Pull Requests Card -->
+          <div class="activity-card">
+            <i class="fab fa-github"></i>
+            <h3>Pull Requests</h3>
+            <div class="activity-stats">
+              <span class="open-count">Open: <span id="pr-open">0</span></span>
+              <span class="closed-count">Closed: <span id="pr-closed">0</span></span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar" id="pr-progress" style="width: 0%;"></div>
+            </div>
+            <p class="progress-label">Closed PRs</p>
+          </div>
+
+          <!-- Issues Card -->
+          <div class="activity-card">
+            <i class="fas fa-exclamation-circle"></i>
+            <h3>Issues</h3>
+            <div class="activity-stats">
+              <span class="open-count">Open: <span id="issues-open">0</span></span>
+              <span class="closed-count">Closed: <span id="issues-closed">0</span></span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar" id="issues-progress" style="width: 0%;"></div>
+            </div>
+            <p class="progress-label">Closed Issues</p>
+          </div>
+
+          <!-- Code Review Progress Card (simulated but customizable) -->
+          <div class="activity-card">
+            <i class="fas fa-code-branch"></i>
+            <h3>Code Review Progress</h3>
+            <div class="activity-stats">
+              <span>Reviewed: <span id="review-reviewed">0</span></span>
+              <span>Pending: <span id="review-pending">0</span></span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar" id="review-progress" style="width: 0%;"></div>
+            </div>
+            <p class="progress-label">PRs Reviewed</p>
+            <p class="note">* Based on open PRs with reviews (simulated)</p>
+          </div>
         </div>
       </div>
     </section>
@@ -267,11 +319,18 @@
               <p>Pagination for GitHub repos, search bar, scroll progress ring, custom cursor, toast notifications, system theme detection.</p>
             </div>
           </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Day 9</div>
+            <div class="timeline-content">
+              <h3>GitHub Activity: PRs, Issues, Code Review Progress</h3>
+              <p>Fetch and display pull requests and issues from a repo, show code review completion percentage.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- Contact Section with EmailJS (toast notifications) -->
+    <!-- Contact Section with EmailJS -->
     <section id="contact" class="contact">
       <div class="container">
         <h2>Get In Touch</h2>
@@ -281,7 +340,6 @@
           <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
           <button type="submit">Send Message</button>
         </form>
-        <!-- form-feedback removed – using toast instead -->
       </div>
     </section>
   </main>

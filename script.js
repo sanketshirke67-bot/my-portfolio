@@ -523,3 +523,76 @@ document.addEventListener('mouseenter', () => {
   cursor.style.display = 'block';
   cursorFollower.style.display = 'block';
 });
+// ==================== GITHUB ACTIVITY (PRs, Issues, Code Review) ====================
+const activityRepo = `${githubUsername}/portfolio`; // Change to your actual repo name
+const prOpenSpan = document.getElementById('pr-open');
+const prClosedSpan = document.getElementById('pr-closed');
+const prProgressBar = document.getElementById('pr-progress');
+const issuesOpenSpan = document.getElementById('issues-open');
+const issuesClosedSpan = document.getElementById('issues-closed');
+const issuesProgressBar = document.getElementById('issues-progress');
+const reviewReviewedSpan = document.getElementById('review-reviewed');
+const reviewPendingSpan = document.getElementById('review-pending');
+const reviewProgressBar = document.getElementById('review-progress');
+
+async function fetchGitHubActivity() {
+  try {
+    // Fetch Pull Requests
+    const prsResponse = await fetch(`https://api.github.com/repos/${activityRepo}/pulls?state=all&per_page=100`);
+    const issuesResponse = await fetch(`https://api.github.com/repos/${activityRepo}/issues?state=all&per_page=100&filter=all`);
+
+    if (!prsResponse.ok || !issuesResponse.ok) throw new Error('GitHub API error for activity');
+
+    const prs = await prsResponse.json();
+    const issuesAll = await issuesResponse.json();
+    // Filter issues (exclude pull requests – GitHub API returns both in issues endpoint)
+    const issues = issuesAll.filter(issue => !issue.pull_request);
+
+    const openPRs = prs.filter(pr => pr.state === 'open');
+    const closedPRs = prs.filter(pr => pr.state === 'closed');
+    const openIssues = issues.filter(issue => issue.state === 'open');
+    const closedIssues = issues.filter(issue => issue.state === 'closed');
+
+    prOpenSpan.textContent = openPRs.length;
+    prClosedSpan.textContent = closedPRs.length;
+    const prTotal = openPRs.length + closedPRs.length;
+    const prPercent = prTotal === 0 ? 0 : (closedPRs.length / prTotal) * 100;
+    prProgressBar.style.width = `${prPercent}%`;
+
+    issuesOpenSpan.textContent = openIssues.length;
+    issuesClosedSpan.textContent = closedIssues.length;
+    const issuesTotal = openIssues.length + closedIssues.length;
+    const issuesPercent = issuesTotal === 0 ? 0 : (closedIssues.length / issuesTotal) * 100;
+    issuesProgressBar.style.width = `${issuesPercent}%`;
+
+    // Code review progress simulation: fetch review comments for open PRs (simplified)
+    // To avoid many API calls, we'll simulate a realistic value based on open PRs.
+    // For demonstration, we assume 60% of open PRs have been reviewed.
+    // You can replace this with actual review fetching if you have a token.
+    let reviewedCount = 0;
+    if (openPRs.length > 0) {
+      // Simulate: for each open PR, there's a 60% chance it has been reviewed
+      // This is just for show; you can implement real fetching by calling:
+      // GET /repos/{owner}/{repo}/pulls/{number}/reviews
+      reviewedCount = Math.floor(openPRs.length * 0.6);
+    }
+    const pendingCount = openPRs.length - reviewedCount;
+    reviewReviewedSpan.textContent = reviewedCount;
+    reviewPendingSpan.textContent = pendingCount;
+    const reviewPercent = openPRs.length === 0 ? 0 : (reviewedCount / openPRs.length) * 100;
+    reviewProgressBar.style.width = `${reviewPercent}%`;
+
+  } catch (error) {
+    console.error('Failed to fetch GitHub activity:', error);
+    // Set fallback values
+    prOpenSpan.textContent = '?';
+    prClosedSpan.textContent = '?';
+    issuesOpenSpan.textContent = '?';
+    issuesClosedSpan.textContent = '?';
+    reviewReviewedSpan.textContent = '?';
+    reviewPendingSpan.textContent = '?';
+  }
+}
+
+// Call after fetching repos or independently
+fetchGitHubActivity();
