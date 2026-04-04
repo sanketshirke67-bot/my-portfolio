@@ -596,3 +596,28 @@ async function fetchGitHubActivity() {
 
 // Call after fetching repos or independently
 fetchGitHubActivity();
+async function fetchGitHubRepos() {
+  // Show skeletons
+  projectsContainer.innerHTML = '';
+  for (let i = 0; i < 6; i++) {
+    const skeleton = document.createElement('div');
+    skeleton.className = 'skeleton-card';
+    projectsContainer.appendChild(skeleton);
+  }
+
+  try {
+    const response = await fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated&per_page=100`);
+    if (!response.ok) throw new Error('GitHub API error');
+    allRepos = await response.json();
+    displayedCount = 6;
+    applyFiltersAndRender();
+    // Update last updated timestamp
+    const lastUpdatedSpan = document.getElementById('last-updated');
+    if (lastUpdatedSpan) {
+      const now = new Date();
+      lastUpdatedSpan.textContent = `Last updated: ${now.toLocaleString()}`;
+    }
+  } catch (error) {
+    projectsContainer.innerHTML = '<div class="loader">Failed to load GitHub projects. Please check your username or try again later.</div>';
+  }
+}

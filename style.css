@@ -885,3 +885,51 @@ body.light-mode .progress-bar-container {
   color: #888;
   margin-top: 10px;
 }
+/* ========== DAY 10 SMALL IMPROVEMENTS ========== */
+
+/* Loading skeleton animation */
+.skeleton-card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 25px;
+  height: 280px;
+  animation: pulse 1.5s infinite;
+}
+body.light-mode .skeleton-card {
+  background: #f0f0f0;
+}
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* Last updated timestamp */
+.last-updated {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* Back-to-top button subtle bounce */
+#back-to-top {
+  transition: transform 0.2s ease, background 0.3s;
+}
+#back-to-top:hover {
+  transform: scale(1.1);
+}
+#back-to-top:active {
+  transform: scale(0.95);
+}
+
+/* Focus outline for accessibility */
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid #e94560;
+  outline-offset: 2px;
+}
+
+/* Smoother scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
