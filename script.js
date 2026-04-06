@@ -523,8 +523,9 @@ document.addEventListener('mouseenter', () => {
   cursor.style.display = 'block';
   cursorFollower.style.display = 'block';
 });
-// ==================== GITHUB ACTIVITY (PRs, Issues, Code Review) ====================
-const activityRepo = `${githubUsername}/portfolio`; // Change to your actual repo name
+// ==================== GITHUB ACTIVITY (PRs, Issues, Code Reviews) with Demo Fallback ====================
+const repoInput = document.getElementById('repo-input');
+const refreshBtn = document.getElementById('refresh-activity');
 const prOpenSpan = document.getElementById('pr-open');
 const prClosedSpan = document.getElementById('pr-closed');
 const prProgressBar = document.getElementById('pr-progress');
@@ -535,89 +536,131 @@ const reviewReviewedSpan = document.getElementById('review-reviewed');
 const reviewPendingSpan = document.getElementById('review-pending');
 const reviewProgressBar = document.getElementById('review-progress');
 
+// Demo data to show when real data is empty
+const demoPRs = { open: 3, closed: 7 };
+const demoIssues = { open: 2, closed: 5 };
+const demoReviews = { reviewed: 2, pending: 1 }; // for open PRs (assuming 3 open PRs)
+
+let currentRepo = repoInput.value.trim();
+
+async function githubFetch(url, token = null) {
+  const headers = { 'Accept': 'application/vnd.github.v3+json' };
+  if (token && token !== 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN') {
+    headers['Authorization'] = `token ${token}`;
+  }
+  const response = await fetch(url, { headers });
+  if (!response.ok) throw new Error(`GitHub API error: ${response.status}`);
+  return response.json();
+}
+
 async function fetchGitHubActivity() {
+  const repo = repoInput.value.trim();
+  if (!repo) {
+    showToast('Please enter a repository (format: owner/repo)', 'error');
+    return;
+  }
+  currentRepo = repo;
+
+  // Show loading state
+  prOpenSpan.textContent = '...';
+  prClosedSpan.textContent = '...';
+  issuesOpenSpan.textContent = '...';
+  issuesClosedSpan.textContent = '...';
+  reviewReviewedSpan.textContent = '...';
+  reviewPendingSpan.textContent = '...';
+
   try {
-    // Fetch Pull Requests
-    const prsResponse = await fetch(`https://api.github.com/repos/${activityRepo}/pulls?state=all&per_page=100`);
-    const issuesResponse = await fetch(`https://api.github.com/repos/${activityRepo}/issues?state=all&per_page=100&filter=all`);
+    const token = GITHUB_TOKEN; // from earlier in your script (set it)
+    const prs = await githubFetch(`https://api.github.com/repos/${repo}/pulls?state=all&per_page=100`, token);
+    const issuesData = await githubFetch(`https://api.github.com/repos/${repo}/issues?state=all&per_page=100&filter=all`, token);
+    const issues = issuesData.filter(issue => !issue.pull_request);
 
-    if (!prsResponse.ok || !issuesResponse.ok) throw new Error('GitHub API error for activity');
+    let openPRs = prs.filter(pr => pr.state === 'open');
+    let closedPRs = prs.filter(pr => pr.state === 'closed');
+    let openIssues = issues.filter(issue => issue.state === 'open');
+    let closedIssues = issues.filter(issue => issue.state === 'closed');
 
-    const prs = await prsResponse.json();
-    const issuesAll = await issuesResponse.json();
-    // Filter issues (exclude pull requests – GitHub API returns both in issues endpoint)
-    const issues = issuesAll.filter(issue => !issue.pull_request);
+    // If no data at all, use demo data
+    const hasRealPRs = openPRs.length + closedPRs.length > 0;
+    const hasRealIssues = openIssues.length + closedIssues.length > 0;
 
-    const openPRs = prs.filter(pr => pr.state === 'open');
-    const closedPRs = prs.filter(pr => pr.state === 'closed');
-    const openIssues = issues.filter(issue => issue.state === 'open');
-    const closedIssues = issues.filter(issue => issue.state === 'closed');
+    if (!hasRealPRs) {
+      openPRs = demoPRs.open;
+      closedPRs = demoPRs.closed;
+    }
+    if (!hasRealIssues) {
+      openIssues = demoIssues.open;
+      closedIssues = demoIssues.closed;
+    }
 
-    prOpenSpan.textContent = openPRs.length;
-    prClosedSpan.textContent = closedPRs.length;
-    const prTotal = openPRs.length + closedPRs.length;
-    const prPercent = prTotal === 0 ? 0 : (closedPRs.length / prTotal) * 100;
+    // Update PR stats
+    prOpenSpan.textContent = typeof openPRs === 'number' ? openPRs : openPRs.length;
+    prClosedSpan.textContent = typeof closedPRs === 'number' ? closedPRs : closedPRs.length;
+    const prTotal = (typeof openPRs === 'number' ? openPRs : openPRs.length) + (typeof closedPRs === 'number' ? closedPRs : closedPRs.length);
+    const prPercent = prTotal === 0 ? 0 : ((typeof closedPRs === 'number' ? closedPRs : closedPRs.length) / prTotal) * 100;
     prProgressBar.style.width = `${prPercent}%`;
 
-    issuesOpenSpan.textContent = openIssues.length;
-    issuesClosedSpan.textContent = closedIssues.length;
-    const issuesTotal = openIssues.length + closedIssues.length;
-    const issuesPercent = issuesTotal === 0 ? 0 : (closedIssues.length / issuesTotal) * 100;
+    // Update Issues stats
+    issuesOpenSpan.textContent = typeof openIssues === 'number' ? openIssues : openIssues.length;
+    issuesClosedSpan.textContent = typeof closedIssues === 'number' ? closedIssues : closedIssues.length;
+    const issuesTotal = (typeof openIssues === 'number' ? openIssues : openIssues.length) + (typeof closedIssues === 'number' ? closedIssues : closedIssues.length);
+    const issuesPercent = issuesTotal === 0 ? 0 : ((typeof closedIssues === 'number' ? closedIssues : closedIssues.length) / issuesTotal) * 100;
     issuesProgressBar.style.width = `${issuesPercent}%`;
 
-    // Code review progress simulation: fetch review comments for open PRs (simplified)
-    // To avoid many API calls, we'll simulate a realistic value based on open PRs.
-    // For demonstration, we assume 60% of open PRs have been reviewed.
-    // You can replace this with actual review fetching if you have a token.
-    let reviewedCount = 0;
-    if (openPRs.length > 0) {
-      // Simulate: for each open PR, there's a 60% chance it has been reviewed
-      // This is just for show; you can implement real fetching by calling:
-      // GET /repos/{owner}/{repo}/pulls/{number}/reviews
-      reviewedCount = Math.floor(openPRs.length * 0.6);
+    // Code reviews (only if real PRs exist, else use demo)
+    let reviewedPRs = 0, pendingPRs = 0;
+    if (hasRealPRs && openPRs.length > 0) {
+      const reviewPromises = openPRs.slice(0, 30).map(async (pr) => {
+        try {
+          const reviews = await githubFetch(pr.url + '/reviews', token);
+          return reviews.length > 0 ? 1 : 0;
+        } catch (err) {
+          return 0;
+        }
+      });
+      const reviewResults = await Promise.all(reviewPromises);
+      reviewedPRs = reviewResults.reduce((a, b) => a + b, 0);
+      pendingPRs = openPRs.length - reviewedPRs;
+    } else if (!hasRealPRs && openPRs > 0) {
+      // Using demo numbers
+      reviewedPRs = demoReviews.reviewed;
+      pendingPRs = demoReviews.pending;
+    } else {
+      reviewedPRs = 0;
+      pendingPRs = 0;
     }
-    const pendingCount = openPRs.length - reviewedCount;
-    reviewReviewedSpan.textContent = reviewedCount;
-    reviewPendingSpan.textContent = pendingCount;
-    const reviewPercent = openPRs.length === 0 ? 0 : (reviewedCount / openPRs.length) * 100;
+
+    reviewReviewedSpan.textContent = reviewedPRs;
+    reviewPendingSpan.textContent = pendingPRs;
+    const reviewPercent = (reviewedPRs + pendingPRs) === 0 ? 0 : (reviewedPRs / (reviewedPRs + pendingPRs)) * 100;
     reviewProgressBar.style.width = `${reviewPercent}%`;
+
+    // If we used demo data, show a subtle toast
+    if (!hasRealPRs || !hasRealIssues) {
+      showToast('This repo has no real PRs/issues – showing demo data for illustration.', 'info');
+    }
 
   } catch (error) {
     console.error('Failed to fetch GitHub activity:', error);
-    // Set fallback values
-    prOpenSpan.textContent = '?';
-    prClosedSpan.textContent = '?';
-    issuesOpenSpan.textContent = '?';
-    issuesClosedSpan.textContent = '?';
-    reviewReviewedSpan.textContent = '?';
-    reviewPendingSpan.textContent = '?';
+    showToast(`Could not load data for "${repo}". Using demo data.`, 'error');
+    // Fallback to demo data
+    prOpenSpan.textContent = demoPRs.open;
+    prClosedSpan.textContent = demoPRs.closed;
+    prProgressBar.style.width = `${(demoPRs.closed / (demoPRs.open + demoPRs.closed)) * 100}%`;
+    issuesOpenSpan.textContent = demoIssues.open;
+    issuesClosedSpan.textContent = demoIssues.closed;
+    issuesProgressBar.style.width = `${(demoIssues.closed / (demoIssues.open + demoIssues.closed)) * 100}%`;
+    reviewReviewedSpan.textContent = demoReviews.reviewed;
+    reviewPendingSpan.textContent = demoReviews.pending;
+    reviewProgressBar.style.width = `${(demoReviews.reviewed / (demoReviews.reviewed + demoReviews.pending)) * 100}%`;
   }
 }
 
-// Call after fetching repos or independently
+// Event listeners
+refreshBtn.addEventListener('click', fetchGitHubActivity);
+repoInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') fetchGitHubActivity();
+});
+
+// Initial load
 fetchGitHubActivity();
-async function fetchGitHubRepos() {
-  // Show skeletons
-  projectsContainer.innerHTML = '';
-  for (let i = 0; i < 6; i++) {
-    const skeleton = document.createElement('div');
-    skeleton.className = 'skeleton-card';
-    projectsContainer.appendChild(skeleton);
-  }
-
-  try {
-    const response = await fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated&per_page=100`);
-    if (!response.ok) throw new Error('GitHub API error');
-    allRepos = await response.json();
-    displayedCount = 6;
-    applyFiltersAndRender();
-    // Update last updated timestamp
-    const lastUpdatedSpan = document.getElementById('last-updated');
-    if (lastUpdatedSpan) {
-      const now = new Date();
-      lastUpdatedSpan.textContent = `Last updated: ${now.toLocaleString()}`;
-    }
-  } catch (error) {
-    projectsContainer.innerHTML = '<div class="loader">Failed to load GitHub projects. Please check your username or try again later.</div>';
-  }
-}

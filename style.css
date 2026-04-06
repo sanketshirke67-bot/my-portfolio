@@ -933,3 +933,48 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 html {
   scroll-behavior: smooth;
 }
+/* Activity Controls */
+.activity-controls {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.repo-selector {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.repo-selector label {
+  font-weight: 600;
+}
+.repo-selector input {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e94560;
+  background: rgba(255,255,255,0.1);
+  color: inherit;
+  min-width: 250px;
+}
+body.light-mode .repo-selector input {
+  background: #fff;
+  color: #1a1a2e;
+}
+#refresh-activity {
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+#refresh-activity:hover {
+  transform: scale(1.05);
+}
+.activity-controls .note {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 10px;
+}
