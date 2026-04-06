@@ -978,3 +978,19 @@ body.light-mode .repo-selector input {
   color: #888;
   margin-top: 10px;
 }
+/* Skeleton loader for project cards */
+.skeleton-card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 25px;
+  height: 280px;
+  animation: pulse 1.5s infinite;
+}
+body.light-mode .skeleton-card {
+  background: #f0f0f0;
+}
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
