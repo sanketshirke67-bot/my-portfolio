@@ -162,97 +162,32 @@ let currentFilter = 'all';
 let currentSearch = '';
 
 async function fetchGitHubRepos() {
+  // Show 6 skeleton cards while loading
+  projectsContainer.innerHTML = '';
+  for (let i = 0; i < 6; i++) {
+    const skeleton = document.createElement('div');
+    skeleton.className = 'skeleton-card';
+    projectsContainer.appendChild(skeleton);
+  }
+
   try {
     const response = await fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated&per_page=100`);
     if (!response.ok) throw new Error('GitHub API error');
     allRepos = await response.json();
     displayedCount = 6;
     applyFiltersAndRender();
+
+    // Update "last updated" timestamp (if element exists)
+    const lastUpdatedSpan = document.getElementById('last-updated');
+    if (lastUpdatedSpan) {
+      const now = new Date();
+      lastUpdatedSpan.textContent = `Last updated: ${now.toLocaleString()}`;
+    }
   } catch (error) {
+    console.error('Failed to fetch repos:', error);
     projectsContainer.innerHTML = '<div class="loader">Failed to load GitHub projects. Please check your username or try again later.</div>';
   }
 }
-
-function filterReposByLanguage(repos, language) {
-  if (language === 'all') return repos;
-  return repos.filter(repo => repo.language === language);
-}
-
-function filterReposBySearch(repos, query) {
-  if (!query) return repos;
-  const lowerQuery = query.toLowerCase();
-  return repos.filter(repo => repo.name.toLowerCase().includes(lowerQuery) || 
-    (repo.description && repo.description.toLowerCase().includes(lowerQuery)));
-}
-
-function getFilteredRepos() {
-  let filtered = filterReposByLanguage(allRepos, currentFilter);
-  filtered = filterReposBySearch(filtered, currentSearch);
-  return filtered;
-}
-
-function renderProjects() {
-  const filtered = getFilteredRepos();
-  const toDisplay = filtered.slice(0, displayedCount);
-  if (toDisplay.length === 0) {
-    projectsContainer.innerHTML = '<div class="loader">No projects match your criteria.</div>';
-    loadMoreBtn.style.display = 'none';
-    return;
-  }
-  projectsContainer.innerHTML = '';
-  toDisplay.forEach(repo => {
-    const card = document.createElement('div');
-    card.classList.add('project-card');
-    card.setAttribute('data-language', repo.language || 'Unknown');
-    card.innerHTML = `
-      <i class="fab fa-github"></i>
-      <h3>${repo.name}</h3>
-      <p>${repo.description || 'No description provided.'}</p>
-      <a href="${repo.html_url}" target="_blank">View on GitHub →</a>
-    `;
-    projectsContainer.appendChild(card);
-  });
-  if (filtered.length > displayedCount) {
-    loadMoreBtn.style.display = 'inline-block';
-  } else {
-    loadMoreBtn.style.display = 'none';
-  }
-}
-
-function applyFiltersAndRender() {
-  displayedCount = 6;
-  renderProjects();
-}
-
-function loadMore() {
-  const filtered = getFilteredRepos();
-  if (displayedCount < filtered.length) {
-    displayedCount += 6;
-    renderProjects();
-  }
-}
-
-// Filter buttons
-const filterBtns = document.querySelectorAll('.filter-btn');
-filterBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    filterBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.getAttribute('data-filter');
-    applyFiltersAndRender();
-  });
-});
-
-// Search input
-searchInput.addEventListener('input', (e) => {
-  currentSearch = e.target.value;
-  applyFiltersAndRender();
-});
-
-loadMoreBtn.addEventListener('click', loadMore);
-
-fetchGitHubRepos();
-
 // ==================== TESTIMONIALS CAROUSEL ====================
 const slides = document.querySelectorAll('.testimonial-card');
 const slideContainer = document.querySelector('.carousel-slide');
