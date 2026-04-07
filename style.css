@@ -994,3 +994,35 @@ body.light-mode .skeleton-card {
   50% { opacity: 1; }
   100% { opacity: 0.6; }
 }
+/* Copy email button */
+.email-copy-wrapper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.email-copy-wrapper input {
+  flex: 1;
+}
+.copy-btn {
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.2s;
+  white-space: nowrap;
+}
+.copy-btn:hover {
+  transform: scale(1.02);
+  background: #c73652;
+}
+@media (max-width: 600px) {
+  .email-copy-wrapper {
+    flex-direction: column;
+  }
+  .copy-btn {
+    width: 100%;
+  }
+}

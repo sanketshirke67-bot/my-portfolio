@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Day 11 – Fixed GitHub Activity | Sanket Shirke</title>
+  <title>Day 12 – Fixed GitHub Activity | Sanket Shirke</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
@@ -165,23 +165,35 @@
         <h2>Daily Learning Log</h2>
         <div class="timeline">
           <!-- Previous days... -->
-          <div class="timeline-item"><div class="timeline-date">Day 11</div><div class="timeline-content"><h3>Fixed Empty Issues & PRs</h3><p>Added repo selector, refresh button, demo data fallback, and better error handling. Now the activity section never looks empty.</p></div></div>
+          <div class="timeline-item">
+            <div class="timeline-date">Day 12</div>
+            <div class="timeline-content">
+              <h3>cpoy the email button</h3>
+              <p>Added a one-click copy email button to the contact section – small but handy.</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="contact">
-      <div class="container">
-        <h2>Get In Touch</h2>
-        <form id="contact-form">
-          <input type="text" id="name" placeholder="Your Name" required />
-          <input type="email" id="email" placeholder="Your Email" required />
-          <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
-          <button type="submit">Send Message</button>
-        </form>
+    <!-- Contact Section with Copy Email -->
+<section id="contact" class="contact">
+  <div class="container">
+    <h2>Get In Touch</h2>
+    <form id="contact-form">
+      <input type="text" id="name" name="name" placeholder="Your Name" required />
+      <div class="email-copy-wrapper">
+        <input type="email" id="email" name="email" placeholder="Your Email" required />
+        <button type="button" id="copy-email-btn" class="copy-btn" aria-label="Copy my email">
+          <i class="fas fa-copy"></i> Copy my email
+        </button>
       </div>
-    </section>
+      <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
+      <button type="submit">Send Message</button>
+    </form>
+  </div>
+</section>
   </main>
 
   <footer><p>&copy; 2025 Sanket Shirke. Built with ❤️ for my learning journey.</p></footer>
