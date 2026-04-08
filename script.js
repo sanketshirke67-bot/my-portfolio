@@ -168,6 +168,18 @@ async function fetchGitHubRepos() {
       const now = new Date();
       lastUpdatedSpan.textContent = `Last updated: ${now.toLocaleString()}`;
     }
+        // --- Day 13: show most recently updated repo ---
+    if (allRepos.length > 0) {
+      const sorted = [...allRepos].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+      const latest = sorted[0];
+      const updatedDate = new Date(latest.updated_at);
+      const timeAgo = Math.floor((Date.now() - updatedDate) / 1000 / 60 / 60 / 24);
+      const daysAgo = timeAgo === 0 ? 'today' : `${timeAgo} day${timeAgo !== 1 ? 's' : ''} ago`;
+      const latestRepoDiv = document.getElementById('last-updated-repo');
+      if (latestRepoDiv) {
+        latestRepoDiv.innerHTML = `📦 Most recent update: <strong>${latest.name}</strong> – ${daysAgo} (${updatedDate.toLocaleDateString()})`;
+      }
+    }
   } catch (error) {
     projectsContainer.innerHTML = '<div class="loader">Failed to load GitHub projects. Please check your username or try again later.</div>';
   }
