@@ -599,3 +599,19 @@ if (copyBtn) {
        }
   });
 }
+// ==================== DAY 14: VISIT COUNTER & WELCOME BACK ====================
+function updateVisitMessage() {
+  const visitSpan = document.getElementById('visit-message');
+  if (!visitSpan) return;
+  
+  let count = localStorage.getItem('portfolioVisitCount');
+  if (count === null) {
+    count = 1;
+    visitSpan.textContent = '✨ Welcome! Thanks for visiting my portfolio. ✨';
+  } else {
+    count = parseInt(count) + 1;
+    visitSpan.textContent = `👋 Welcome back! You've visited this page ${count} time${count !== 1 ? 's' : ''}.`;
+  }
+  localStorage.setItem('portfolioVisitCount', count);
+}
+updateVisitMessage();

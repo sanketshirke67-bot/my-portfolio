@@ -1037,3 +1037,9 @@ body.light-mode .skeleton-card {
 body.light-mode .last-updated-repo {
   color: #666;
 }
+/* Visit message */
+.visit-message {
+  font-size: 0.8rem;
+  margin-top: 10px;
+  opacity: 0.8;
+}
