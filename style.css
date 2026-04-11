@@ -1043,3 +1043,33 @@ body.light-mode .last-updated-repo {
   margin-top: 10px;
   opacity: 0.8;
 }
+/* Project details toggle */
+.toggle-details-btn {
+  background: none;
+  border: none;
+  color: #e94560;
+  cursor: pointer;
+  font-size: 0.85rem;
+  margin-top: 10px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+.toggle-details-btn:hover {
+  background: rgba(233, 69, 96, 0.1);
+}
+.project-details {
+  display: none;
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: #aaa;
+  text-align: left;
+  padding: 8px;
+  border-top: 1px solid rgba(233, 69, 96, 0.3);
+}
+body.light-mode .project-details {
+  color: #555;
+}
+.project-details.show {
+  display: block;
+}

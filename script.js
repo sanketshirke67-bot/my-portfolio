@@ -212,136 +212,40 @@ function renderProjects() {
     const card = document.createElement('div');
     card.classList.add('project-card');
     card.setAttribute('data-language', repo.language || 'Unknown');
-    card.innerHTML = `<i class="fab fa-github"></i><h3>${repo.name}</h3><p>${repo.description || 'No description provided.'}</p><a href="${repo.html_url}" target="_blank">View on GitHub →</a>`;
+    
+    // Main content
+    card.innerHTML = `
+      <i class="fab fa-github"></i>
+      <h3>${repo.name}</h3>
+      <p>${repo.description || 'No description provided.'}</p>
+      <a href="${repo.html_url}" target="_blank">View on GitHub →</a>
+    `;
+    
+    // --- Day 15: Add toggle details ---
+    const detailsDiv = document.createElement('div');
+    detailsDiv.className = 'project-details';
+    // Generate a fun fact or extended info
+    const stars = repo.stargazers_count || 0;
+    const forks = repo.forks_count || 0;
+    detailsDiv.innerHTML = `⭐ ${stars} stars | 🍴 ${forks} forks<br>🕒 Updated: ${new Date(repo.updated_at).toLocaleDateString()}`;
+    
+    const toggleBtn = document.createElement('button');
+    toggleBtn.textContent = '📋 Show details';
+    toggleBtn.className = 'toggle-details-btn';
+    toggleBtn.addEventListener('click', () => {
+      detailsDiv.classList.toggle('show');
+      toggleBtn.textContent = detailsDiv.classList.contains('show') ? '🔽 Hide details' : '📋 Show details';
+    });
+    
+    card.appendChild(toggleBtn);
+    card.appendChild(detailsDiv);
+    // --- end of Day 15 addition ---
+    
     projectsContainer.appendChild(card);
   });
   if (filtered.length > displayedCount) loadMoreBtn.style.display = 'inline-block';
   else loadMoreBtn.style.display = 'none';
 }
-function applyFiltersAndRender() {
-  displayedCount = 6;
-  renderProjects();
-}
-function loadMore() {
-  const filtered = getFilteredRepos();
-  if (displayedCount < filtered.length) {
-    displayedCount += 6;
-    renderProjects();
-  }
-}
-const filterBtns = document.querySelectorAll('.filter-btn');
-filterBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
-    filterBtns.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = btn.getAttribute('data-filter');
-    applyFiltersAndRender();
-  });
-});
-searchInput.addEventListener('input', (e) => {
-  currentSearch = e.target.value;
-  applyFiltersAndRender();
-});
-loadMoreBtn.addEventListener('click', loadMore);
-fetchGitHubRepos();
-
-// ==================== TESTIMONIALS CAROUSEL ====================
-const slides = document.querySelectorAll('.testimonial-card');
-const slideContainer = document.querySelector('.carousel-slide');
-const prevBtn = document.querySelector('.carousel-prev');
-const nextBtn = document.querySelector('.carousel-next');
-const dotsContainer = document.querySelector('.carousel-dots');
-let currentIndex = 0;
-let slideInterval;
-function updateCarousel() {
-  const slideWidth = slides[0].clientWidth;
-  slideContainer.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
-  updateDots();
-}
-function updateDots() {
-  const dots = document.querySelectorAll('.dot');
-  dots.forEach((dot, idx) => {
-    if (idx === currentIndex) dot.classList.add('active');
-    else dot.classList.remove('active');
-  });
-}
-function createDots() {
-  dotsContainer.innerHTML = '';
-  slides.forEach((_, idx) => {
-    const dot = document.createElement('span');
-    dot.classList.add('dot');
-    if (idx === currentIndex) dot.classList.add('active');
-    dot.addEventListener('click', () => {
-      clearInterval(slideInterval);
-      currentIndex = idx;
-      updateCarousel();
-      startAutoSlide();
-    });
-    dotsContainer.appendChild(dot);
-  });
-}
-function nextSlide() {
-  currentIndex = (currentIndex + 1) % slides.length;
-  updateCarousel();
-}
-function prevSlide() {
-  currentIndex = (currentIndex - 1 + slides.length) % slides.length;
-  updateCarousel();
-}
-function startAutoSlide() {
-  slideInterval = setInterval(() => { nextSlide(); }, 5000);
-}
-prevBtn.addEventListener('click', () => { clearInterval(slideInterval); prevSlide(); startAutoSlide(); });
-nextBtn.addEventListener('click', () => { clearInterval(slideInterval); nextSlide(); startAutoSlide(); });
-window.addEventListener('resize', () => { updateCarousel(); });
-createDots();
-startAutoSlide();
-
-// ==================== PARTICLE BACKGROUND ====================
-const canvas = document.getElementById('particle-canvas');
-const ctx = canvas.getContext('2d');
-let particles = [];
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
-class Particle {
-  constructor() {
-    this.x = Math.random() * canvas.width;
-    this.y = Math.random() * canvas.height;
-    this.size = Math.random() * 3 + 1;
-    this.speedX = (Math.random() - 0.5) * 1;
-    this.speedY = (Math.random() - 0.5) * 1;
-    this.color = `rgba(233, 69, 96, ${Math.random() * 0.5 + 0.2})`;
-  }
-  update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    if (this.x < 0) this.x = canvas.width;
-    if (this.x > canvas.width) this.x = 0;
-    if (this.y < 0) this.y = canvas.height;
-    if (this.y > canvas.height) this.y = 0;
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-    ctx.fillStyle = this.color;
-    ctx.fill();
-  }
-}
-function initParticles() {
-  particles = [];
-  for (let i = 0; i < 100; i++) particles.push(new Particle());
-}
-initParticles();
-function animateParticles() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => { p.update(); p.draw(); });
-  requestAnimationFrame(animateParticles);
-}
-animateParticles();
 
 // ==================== BACK TO TOP & SCROLL PROGRESS ====================
 const backToTopBtn = document.getElementById('back-to-top');
@@ -615,3 +519,22 @@ function updateVisitMessage() {
   localStorage.setItem('portfolioVisitCount', count);
 }
 updateVisitMessage();
+function updateVisitMessage() {
+  const visitSpan = document.getElementById('visit-message');
+  if (!visitSpan) return;
+  
+  // Check if localStorage is available
+  if (typeof Storage !== 'undefined') {
+    let count = localStorage.getItem('portfolioVisitCount');
+    if (count === null) {
+      count = 1;
+      visitSpan.textContent = '✨ Welcome! Thanks for visiting my portfolio. ✨';
+    } else {
+      count = parseInt(count) + 1;
+      visitSpan.textContent = `👋 Welcome back! You've visited this page ${count} time${count !== 1 ? 's' : ''}.`;
+    }
+    localStorage.setItem('portfolioVisitCount', count);
+  } else {
+    visitSpan.textContent = '✨ Welcome! (Local storage not supported)';
+  }
+}
