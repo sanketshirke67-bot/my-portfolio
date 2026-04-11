@@ -1,5 +1,4 @@
 // ==================== INITIAL SETUP ====================
-// Mobile menu toggle
 const hamburger = document.getElementById('hamburger');
 const navLinks = document.querySelector('.nav-links');
 
@@ -15,7 +14,6 @@ document.querySelectorAll('.nav-links a').forEach(link => {
   });
 });
 
-// Smooth scroll for all anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function(e) {
     const targetId = this.getAttribute('href').substring(1);
@@ -28,16 +26,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   });
 });
 
-// Hero button scroll to projects
 document.getElementById('hero-btn').addEventListener('click', () => {
   document.getElementById('projects').scrollIntoView({ behavior: 'smooth' });
 });
 
-// ==================== DARK/LIGHT MODE with System Preference ====================
+// ==================== DARK/LIGHT MODE ====================
 const toggleBtn = document.getElementById('theme-toggle');
 const body = document.body;
-
-// Check system preference
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 let savedTheme = localStorage.getItem('theme');
 if (!savedTheme) {
@@ -50,7 +45,6 @@ if (savedTheme === 'light') {
   body.classList.remove('light-mode');
   toggleBtn.textContent = '🌙';
 }
-
 toggleBtn.addEventListener('click', () => {
   body.classList.toggle('light-mode');
   if (body.classList.contains('light-mode')) {
@@ -64,16 +58,8 @@ toggleBtn.addEventListener('click', () => {
 
 // ==================== TYPING ANIMATION ====================
 const typingText = document.querySelector('.typing-text');
-const phrases = [
-  "I build websites.",
-  "I love coding.",
-  "I learn every day.",
-  "Welcome to my portfolio!"
-];
-let phraseIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
-
+const phrases = ["I build websites.", "I love coding.", "I learn every day.", "Welcome to my portfolio!"];
+let phraseIndex = 0, charIndex = 0, isDeleting = false;
 function typeEffect() {
   const currentPhrase = phrases[phraseIndex];
   if (isDeleting) {
@@ -83,7 +69,6 @@ function typeEffect() {
     typingText.textContent = currentPhrase.substring(0, charIndex + 1);
     charIndex++;
   }
-
   if (!isDeleting && charIndex === currentPhrase.length) {
     isDeleting = true;
     setTimeout(typeEffect, 2000);
@@ -151,7 +136,7 @@ const circularObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 circularProgresses.forEach(progress => circularObserver.observe(progress));
 
-// ==================== GITHUB PROJECTS (with Load More & Search) ====================
+// ==================== GITHUB PROJECTS (with Skeleton Loader) ====================
 const githubUsername = 'sanketshirke67-bot'; // CHANGE TO YOUR USERNAME
 const projectsContainer = document.getElementById('github-projects');
 let allRepos = [];
@@ -161,49 +146,118 @@ const searchInput = document.getElementById('project-search');
 let currentFilter = 'all';
 let currentSearch = '';
 
-async function fetchGitHubRepos() {
-  // Show 6 skeleton cards while loading
+function showSkeletons() {
   projectsContainer.innerHTML = '';
   for (let i = 0; i < 6; i++) {
     const skeleton = document.createElement('div');
     skeleton.className = 'skeleton-card';
     projectsContainer.appendChild(skeleton);
   }
+}
 
+async function fetchGitHubRepos() {
+  showSkeletons();
   try {
     const response = await fetch(`https://api.github.com/users/${githubUsername}/repos?sort=updated&per_page=100`);
     if (!response.ok) throw new Error('GitHub API error');
     allRepos = await response.json();
     displayedCount = 6;
     applyFiltersAndRender();
-
-    // Update "last updated" timestamp (if element exists)
     const lastUpdatedSpan = document.getElementById('last-updated');
     if (lastUpdatedSpan) {
       const now = new Date();
       lastUpdatedSpan.textContent = `Last updated: ${now.toLocaleString()}`;
     }
+        // --- Day 13: show most recently updated repo ---
+    if (allRepos.length > 0) {
+      const sorted = [...allRepos].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+      const latest = sorted[0];
+      const updatedDate = new Date(latest.updated_at);
+      const timeAgo = Math.floor((Date.now() - updatedDate) / 1000 / 60 / 60 / 24);
+      const daysAgo = timeAgo === 0 ? 'today' : `${timeAgo} day${timeAgo !== 1 ? 's' : ''} ago`;
+      const latestRepoDiv = document.getElementById('last-updated-repo');
+      if (latestRepoDiv) {
+        latestRepoDiv.innerHTML = `📦 Most recent update: <strong>${latest.name}</strong> – ${daysAgo} (${updatedDate.toLocaleDateString()})`;
+      }
+    }
   } catch (error) {
-    console.error('Failed to fetch repos:', error);
     projectsContainer.innerHTML = '<div class="loader">Failed to load GitHub projects. Please check your username or try again later.</div>';
   }
 }
+
+function filterReposByLanguage(repos, language) {
+  if (language === 'all') return repos;
+  return repos.filter(repo => repo.language === language);
+}
+function filterReposBySearch(repos, query) {
+  if (!query) return repos;
+  const lowerQuery = query.toLowerCase();
+  return repos.filter(repo => repo.name.toLowerCase().includes(lowerQuery) || (repo.description && repo.description.toLowerCase().includes(lowerQuery)));
+}
+function getFilteredRepos() {
+  let filtered = filterReposByLanguage(allRepos, currentFilter);
+  filtered = filterReposBySearch(filtered, currentSearch);
+  return filtered;
+}
+function renderProjects() {
+  const filtered = getFilteredRepos();
+  const toDisplay = filtered.slice(0, displayedCount);
+  if (toDisplay.length === 0) {
+    projectsContainer.innerHTML = '<div class="loader">No projects match your criteria.</div>';
+    loadMoreBtn.style.display = 'none';
+    return;
+  }
+  projectsContainer.innerHTML = '';
+  toDisplay.forEach(repo => {
+    const card = document.createElement('div');
+    card.classList.add('project-card');
+    card.setAttribute('data-language', repo.language || 'Unknown');
+    card.innerHTML = `<i class="fab fa-github"></i><h3>${repo.name}</h3><p>${repo.description || 'No description provided.'}</p><a href="${repo.html_url}" target="_blank">View on GitHub →</a>`;
+    projectsContainer.appendChild(card);
+  });
+  if (filtered.length > displayedCount) loadMoreBtn.style.display = 'inline-block';
+  else loadMoreBtn.style.display = 'none';
+}
+function applyFiltersAndRender() {
+  displayedCount = 6;
+  renderProjects();
+}
+function loadMore() {
+  const filtered = getFilteredRepos();
+  if (displayedCount < filtered.length) {
+    displayedCount += 6;
+    renderProjects();
+  }
+}
+const filterBtns = document.querySelectorAll('.filter-btn');
+filterBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    filterBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter = btn.getAttribute('data-filter');
+    applyFiltersAndRender();
+  });
+});
+searchInput.addEventListener('input', (e) => {
+  currentSearch = e.target.value;
+  applyFiltersAndRender();
+});
+loadMoreBtn.addEventListener('click', loadMore);
+fetchGitHubRepos();
+
 // ==================== TESTIMONIALS CAROUSEL ====================
 const slides = document.querySelectorAll('.testimonial-card');
 const slideContainer = document.querySelector('.carousel-slide');
 const prevBtn = document.querySelector('.carousel-prev');
 const nextBtn = document.querySelector('.carousel-next');
 const dotsContainer = document.querySelector('.carousel-dots');
-
 let currentIndex = 0;
 let slideInterval;
-
 function updateCarousel() {
   const slideWidth = slides[0].clientWidth;
   slideContainer.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
   updateDots();
 }
-
 function updateDots() {
   const dots = document.querySelectorAll('.dot');
   dots.forEach((dot, idx) => {
@@ -211,7 +265,6 @@ function updateDots() {
     else dot.classList.remove('active');
   });
 }
-
 function createDots() {
   dotsContainer.innerHTML = '';
   slides.forEach((_, idx) => {
@@ -227,38 +280,20 @@ function createDots() {
     dotsContainer.appendChild(dot);
   });
 }
-
 function nextSlide() {
   currentIndex = (currentIndex + 1) % slides.length;
   updateCarousel();
 }
-
 function prevSlide() {
   currentIndex = (currentIndex - 1 + slides.length) % slides.length;
   updateCarousel();
 }
-
 function startAutoSlide() {
-  slideInterval = setInterval(() => {
-    nextSlide();
-  }, 5000);
+  slideInterval = setInterval(() => { nextSlide(); }, 5000);
 }
-
-prevBtn.addEventListener('click', () => {
-  clearInterval(slideInterval);
-  prevSlide();
-  startAutoSlide();
-});
-nextBtn.addEventListener('click', () => {
-  clearInterval(slideInterval);
-  nextSlide();
-  startAutoSlide();
-});
-
-window.addEventListener('resize', () => {
-  updateCarousel();
-});
-
+prevBtn.addEventListener('click', () => { clearInterval(slideInterval); prevSlide(); startAutoSlide(); });
+nextBtn.addEventListener('click', () => { clearInterval(slideInterval); nextSlide(); startAutoSlide(); });
+window.addEventListener('resize', () => { updateCarousel(); });
 createDots();
 startAutoSlide();
 
@@ -266,14 +301,12 @@ startAutoSlide();
 const canvas = document.getElementById('particle-canvas');
 const ctx = canvas.getContext('2d');
 let particles = [];
-
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
-
 class Particle {
   constructor() {
     this.x = Math.random() * canvas.width;
@@ -298,60 +331,42 @@ class Particle {
     ctx.fill();
   }
 }
-
 function initParticles() {
   particles = [];
-  for (let i = 0; i < 100; i++) {
-    particles.push(new Particle());
-  }
+  for (let i = 0; i < 100; i++) particles.push(new Particle());
 }
 initParticles();
-
 function animateParticles() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach(p => {
-    p.update();
-    p.draw();
-  });
+  particles.forEach(p => { p.update(); p.draw(); });
   requestAnimationFrame(animateParticles);
 }
 animateParticles();
 
-// ==================== BACK TO TOP ====================
+// ==================== BACK TO TOP & SCROLL PROGRESS ====================
 const backToTopBtn = document.getElementById('back-to-top');
 window.addEventListener('scroll', () => {
-  if (window.scrollY > 300) {
-    backToTopBtn.style.display = 'flex';
-  } else {
-    backToTopBtn.style.display = 'none';
-  }
+  if (window.scrollY > 300) backToTopBtn.style.display = 'flex';
+  else backToTopBtn.style.display = 'none';
 });
-backToTopBtn.addEventListener('click', () => {
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-// ==================== SCROLL PROGRESS INDICATOR ====================
+backToTopBtn.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
 const progressCircle = document.querySelector('.progress-ring-circle');
 const scrollPercentSpan = document.querySelector('.scroll-percent');
 const radius = 26;
 const circumference = 2 * Math.PI * radius;
 progressCircle.style.strokeDasharray = `${circumference}`;
 progressCircle.style.strokeDashoffset = circumference;
-
 function setProgress(percent) {
   const offset = circumference - (percent / 100) * circumference;
   progressCircle.style.strokeDashoffset = offset;
   scrollPercentSpan.textContent = `${Math.floor(percent)}%`;
 }
-
 window.addEventListener('scroll', () => {
   const scrollTop = window.scrollY;
   const docHeight = document.documentElement.scrollHeight - window.innerHeight;
   const percent = (scrollTop / docHeight) * 100;
   setProgress(percent);
 });
-
-// Click on progress to scroll to top
 document.querySelector('.scroll-progress').addEventListener('click', () => {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
@@ -359,7 +374,6 @@ document.querySelector('.scroll-progress').addEventListener('click', () => {
 // ==================== SCROLL ANIMATIONS ====================
 const fadeElements = document.querySelectorAll('section, .skill-card, .project-card, .timeline-item, .blog-card');
 fadeElements.forEach(el => el.classList.add('fade-in'));
-
 const fadeObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -373,7 +387,7 @@ fadeElements.forEach(el => fadeObserver.observe(el));
 // ==================== VISITOR COUNTER ====================
 async function updateVisitorCount() {
   const visitorSpan = document.getElementById('visitor-count');
-  const namespace = 'sanket_portfolio_day8';
+  const namespace = 'sanket_portfolio_day11';
   const key = 'visitors';
   try {
     const response = await fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`);
@@ -386,52 +400,35 @@ async function updateVisitorCount() {
 }
 updateVisitorCount();
 
-// ==================== TOAST NOTIFICATION SYSTEM ====================
+// ==================== TOAST NOTIFICATION ====================
 function showToast(message, type = 'success') {
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
   toast.textContent = message;
   container.appendChild(toast);
-  setTimeout(() => {
-    toast.remove();
-  }, 4000);
+  setTimeout(() => toast.remove(), 4000);
 }
 
 // ==================== EMAILJS CONTACT FORM ====================
-// Initialize EmailJS with your public key (replace with yours)
-emailjs.init({
-  publicKey: 'YOUR_PUBLIC_KEY', // Get from https://dashboard.emailjs.com/admin/account
-});
-
+emailjs.init({ publicKey: 'YOUR_PUBLIC_KEY' });
 const contactForm = document.getElementById('contact-form');
-
 contactForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const name = document.getElementById('name').value.trim();
   const email = document.getElementById('email').value.trim();
   const message = document.getElementById('message').value.trim();
-
   if (!name || !email || !message) {
     showToast('Please fill in all fields.', 'error');
     return;
   }
-
-  const templateParams = {
-    from_name: name,
-    from_email: email,
-    message: message,
-    to_name: 'Sanket',
-  };
-
+  const templateParams = { from_name: name, from_email: email, message: message, to_name: 'Sanket' };
   try {
     const response = await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
     if (response.status === 200) {
       showToast('Message sent successfully! I\'ll get back to you soon.', 'success');
       contactForm.reset();
-    } else {
-      throw new Error('EmailJS error');
-    }
+    } else throw new Error('EmailJS error');
   } catch (error) {
     console.error('EmailJS error:', error);
     showToast('Oops! Failed to send. Please try again later.', 'error');
@@ -441,15 +438,12 @@ contactForm.addEventListener('submit', async (e) => {
 // ==================== CUSTOM CURSOR ====================
 const cursor = document.querySelector('.cursor');
 const cursorFollower = document.querySelector('.cursor-follower');
-
 document.addEventListener('mousemove', (e) => {
   cursor.style.left = e.clientX + 'px';
   cursor.style.top = e.clientY + 'px';
   cursorFollower.style.left = e.clientX + 'px';
   cursorFollower.style.top = e.clientY + 'px';
 });
-
-// Hide cursor when leaving window
 document.addEventListener('mouseleave', () => {
   cursor.style.display = 'none';
   cursorFollower.style.display = 'none';
@@ -458,6 +452,7 @@ document.addEventListener('mouseenter', () => {
   cursor.style.display = 'block';
   cursorFollower.style.display = 'block';
 });
+
 // ==================== GITHUB ACTIVITY (PRs, Issues, Code Reviews) with Demo Fallback ====================
 const repoInput = document.getElementById('repo-input');
 const refreshBtn = document.getElementById('refresh-activity');
@@ -471,12 +466,13 @@ const reviewReviewedSpan = document.getElementById('review-reviewed');
 const reviewPendingSpan = document.getElementById('review-pending');
 const reviewProgressBar = document.getElementById('review-progress');
 
-// Demo data to show when real data is empty
+// Demo data (fallback)
 const demoPRs = { open: 3, closed: 7 };
 const demoIssues = { open: 2, closed: 5 };
-const demoReviews = { reviewed: 2, pending: 1 }; // for open PRs (assuming 3 open PRs)
+const demoReviews = { reviewed: 2, pending: 1 };
 
-let currentRepo = repoInput.value.trim();
+// GitHub token (optional but recommended)
+const GITHUB_TOKEN = 'YOUR_GITHUB_PERSONAL_ACCESS_TOKEN';
 
 async function githubFetch(url, token = null) {
   const headers = { 'Accept': 'application/vnd.github.v3+json' };
@@ -494,9 +490,8 @@ async function fetchGitHubActivity() {
     showToast('Please enter a repository (format: owner/repo)', 'error');
     return;
   }
-  currentRepo = repo;
 
-  // Show loading state
+  // Loading state
   prOpenSpan.textContent = '...';
   prClosedSpan.textContent = '...';
   issuesOpenSpan.textContent = '...';
@@ -505,9 +500,8 @@ async function fetchGitHubActivity() {
   reviewPendingSpan.textContent = '...';
 
   try {
-    const token = GITHUB_TOKEN; // from earlier in your script (set it)
-    const prs = await githubFetch(`https://api.github.com/repos/${repo}/pulls?state=all&per_page=100`, token);
-    const issuesData = await githubFetch(`https://api.github.com/repos/${repo}/issues?state=all&per_page=100&filter=all`, token);
+    const prs = await githubFetch(`https://api.github.com/repos/${repo}/pulls?state=all&per_page=100`, GITHUB_TOKEN);
+    const issuesData = await githubFetch(`https://api.github.com/repos/${repo}/issues?state=all&per_page=100&filter=all`, GITHUB_TOKEN);
     const issues = issuesData.filter(issue => !issue.pull_request);
 
     let openPRs = prs.filter(pr => pr.state === 'open');
@@ -515,7 +509,6 @@ async function fetchGitHubActivity() {
     let openIssues = issues.filter(issue => issue.state === 'open');
     let closedIssues = issues.filter(issue => issue.state === 'closed');
 
-    // If no data at all, use demo data
     const hasRealPRs = openPRs.length + closedPRs.length > 0;
     const hasRealIssues = openIssues.length + closedIssues.length > 0;
 
@@ -528,26 +521,23 @@ async function fetchGitHubActivity() {
       closedIssues = demoIssues.closed;
     }
 
-    // Update PR stats
     prOpenSpan.textContent = typeof openPRs === 'number' ? openPRs : openPRs.length;
     prClosedSpan.textContent = typeof closedPRs === 'number' ? closedPRs : closedPRs.length;
     const prTotal = (typeof openPRs === 'number' ? openPRs : openPRs.length) + (typeof closedPRs === 'number' ? closedPRs : closedPRs.length);
     const prPercent = prTotal === 0 ? 0 : ((typeof closedPRs === 'number' ? closedPRs : closedPRs.length) / prTotal) * 100;
     prProgressBar.style.width = `${prPercent}%`;
 
-    // Update Issues stats
     issuesOpenSpan.textContent = typeof openIssues === 'number' ? openIssues : openIssues.length;
     issuesClosedSpan.textContent = typeof closedIssues === 'number' ? closedIssues : closedIssues.length;
     const issuesTotal = (typeof openIssues === 'number' ? openIssues : openIssues.length) + (typeof closedIssues === 'number' ? closedIssues : closedIssues.length);
     const issuesPercent = issuesTotal === 0 ? 0 : ((typeof closedIssues === 'number' ? closedIssues : closedIssues.length) / issuesTotal) * 100;
     issuesProgressBar.style.width = `${issuesPercent}%`;
 
-    // Code reviews (only if real PRs exist, else use demo)
     let reviewedPRs = 0, pendingPRs = 0;
     if (hasRealPRs && openPRs.length > 0) {
       const reviewPromises = openPRs.slice(0, 30).map(async (pr) => {
         try {
-          const reviews = await githubFetch(pr.url + '/reviews', token);
+          const reviews = await githubFetch(pr.url + '/reviews', GITHUB_TOKEN);
           return reviews.length > 0 ? 1 : 0;
         } catch (err) {
           return 0;
@@ -557,7 +547,6 @@ async function fetchGitHubActivity() {
       reviewedPRs = reviewResults.reduce((a, b) => a + b, 0);
       pendingPRs = openPRs.length - reviewedPRs;
     } else if (!hasRealPRs && openPRs > 0) {
-      // Using demo numbers
       reviewedPRs = demoReviews.reviewed;
       pendingPRs = demoReviews.pending;
     } else {
@@ -570,11 +559,9 @@ async function fetchGitHubActivity() {
     const reviewPercent = (reviewedPRs + pendingPRs) === 0 ? 0 : (reviewedPRs / (reviewedPRs + pendingPRs)) * 100;
     reviewProgressBar.style.width = `${reviewPercent}%`;
 
-    // If we used demo data, show a subtle toast
     if (!hasRealPRs || !hasRealIssues) {
       showToast('This repo has no real PRs/issues – showing demo data for illustration.', 'info');
     }
-
   } catch (error) {
     console.error('Failed to fetch GitHub activity:', error);
     showToast(`Could not load data for "${repo}". Using demo data.`, 'error');
@@ -591,11 +578,40 @@ async function fetchGitHubActivity() {
   }
 }
 
-// Event listeners
 refreshBtn.addEventListener('click', fetchGitHubActivity);
 repoInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') fetchGitHubActivity();
 });
 
-// Initial load
 fetchGitHubActivity();
+// ==================== COPY EMAIL TO CLIPBOARD (Day 12) ====================
+
+const copyBtn = document.getElementById('copy-email-Btn');
+if (copyBtn) {
+  copyBtn.addEventListener('click', async () => {
+      const myEmail = 'sanketshirke67@gmail.com'; // email
+      try {
+          await navigator.clipboard.writeText(myEmail);
+          showToast('email copy to clipboard!' , 'success' );
+       }  catch (err) {
+          showToast('failed to copy email.please try again' , 'error');
+
+       }
+  });
+}
+// ==================== DAY 14: VISIT COUNTER & WELCOME BACK ====================
+function updateVisitMessage() {
+  const visitSpan = document.getElementById('visit-message');
+  if (!visitSpan) return;
+  
+  let count = localStorage.getItem('portfolioVisitCount');
+  if (count === null) {
+    count = 1;
+    visitSpan.textContent = '✨ Welcome! Thanks for visiting my portfolio. ✨';
+  } else {
+    count = parseInt(count) + 1;
+    visitSpan.textContent = `👋 Welcome back! You've visited this page ${count} time${count !== 1 ? 's' : ''}.`;
+  }
+  localStorage.setItem('portfolioVisitCount', count);
+}
+updateVisitMessage();
