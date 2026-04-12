@@ -1073,3 +1073,92 @@ body.light-mode .project-details {
 .project-details.show {
   display: block;
 }
+/* Streak Calendar Styles */
+.streak-calendar {
+  background: rgba(255,255,255,0.02);
+}
+body.light-mode .streak-calendar {
+  background: #f4f4f9;
+}
+.streak-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+.streak-card {
+  text-align: center;
+  background: rgba(255,255,255,0.05);
+  padding: 20px 30px;
+  border-radius: 16px;
+  min-width: 150px;
+}
+body.light-mode .streak-card {
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.streak-card i {
+  font-size: 2rem;
+  color: #e94560;
+  margin-bottom: 10px;
+}
+.streak-card span {
+  font-size: 2.5rem;
+  font-weight: bold;
+  display: block;
+  color: #e94560;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  max-width: 500px;
+  margin: 0 auto 30px;
+  background: rgba(255,255,255,0.05);
+  padding: 20px;
+  border-radius: 16px;
+}
+body.light-mode .calendar-grid {
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+.calendar-day {
+  text-align: center;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  background: rgba(255,255,255,0.1);
+  transition: transform 0.2s;
+}
+body.light-mode .calendar-day {
+  background: #f0f0f0;
+}
+.calendar-day.worked {
+  background: #e94560;
+  color: white;
+  font-weight: bold;
+}
+.calendar-day.today {
+  border: 2px solid #e94560;
+}
+.streak-btn {
+  display: block;
+  margin: 0 auto 15px;
+  background: #e94560;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.streak-btn:hover {
+  transform: scale(1.05);
+}
+.streak-note {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #888;
+}

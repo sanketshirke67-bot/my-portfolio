@@ -538,3 +538,123 @@ function updateVisitMessage() {
     visitSpan.textContent = '✨ Welcome! (Local storage not supported)';
   }
 }
+// Day 16: Press 'd' to toggle dark/light mode
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'd' || e.key === 'D') {
+    e.preventDefault();
+    document.getElementById('theme-toggle').click();
+    showToast('🌓 Dark mode toggled with keyboard', 'success');
+  }
+});
+// ==================== STREAK CALENDAR (Day 17) ====================
+const STORAGE_KEY = 'workStreakData';
+
+// Get stored data or initialize
+function getStreakData() {
+  const defaultData = { dates: [], lastUpdated: null };
+  const stored = localStorage.getItem(STORAGE_KEY);
+  return stored ? JSON.parse(stored) : defaultData;
+}
+
+function saveStreakData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+// Check if a date is in the worked dates array
+function isWorked(dateStr, dates) {
+  return dates.includes(dateStr);
+}
+
+// Calculate current streak (consecutive days ending today)
+function calculateStreak(dates) {
+  if (dates.length === 0) return 0;
+  const sorted = [...dates].sort();
+  let streak = 0;
+  let currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+  for (let i = sorted.length - 1; i >= 0; i--) {
+    const date = new Date(sorted[i]);
+    date.setHours(0, 0, 0, 0);
+    const diffDays = Math.floor((currentDate - date) / (1000 * 60 * 60 * 24));
+    if (diffDays === streak) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+// Render calendar for current month
+function renderCalendar() {
+  const data = getStreakData();
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+  const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  const calendarDiv = document.getElementById('calendar');
+  if (!calendarDiv) return;
+  calendarDiv.innerHTML = '';
+
+  // Day labels (Sun to Sat)
+  const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  dayNames.forEach(day => {
+    const dayLabel = document.createElement('div');
+    dayLabel.textContent = day;
+    dayLabel.style.textAlign = 'center';
+    dayLabel.style.fontWeight = 'bold';
+    dayLabel.style.color = '#e94560';
+    calendarDiv.appendChild(dayLabel);
+  });
+
+  // Empty cells before first day
+  for (let i = 0; i < firstDay; i++) {
+    const empty = document.createElement('div');
+    calendarDiv.appendChild(empty);
+  }
+
+  // Days of month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const worked = isWorked(dateStr, data.dates);
+    const isToday = (today.getFullYear() === currentYear && today.getMonth() === currentMonth && today.getDate() === d);
+    const dayDiv = document.createElement('div');
+    dayDiv.textContent = d;
+    dayDiv.classList.add('calendar-day');
+    if (worked) dayDiv.classList.add('worked');
+    if (isToday) dayDiv.classList.add('today');
+    calendarDiv.appendChild(dayDiv);
+  }
+
+  // Update stats
+  document.getElementById('current-streak').textContent = calculateStreak(data.dates);
+  document.getElementById('total-days').textContent = data.dates.length;
+}
+
+// Mark today as worked
+function markToday() {
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const data = getStreakData();
+  if (!data.dates.includes(todayStr)) {
+    data.dates.push(todayStr);
+    data.lastUpdated = new Date().toISOString();
+    saveStreakData(data);
+    renderCalendar();
+    showToast('🔥 Day marked! Streak updated.', 'success');
+  } else {
+    showToast('Already marked today. Come back tomorrow!', 'info');
+  }
+}
+
+// Initialize streak calendar
+function initStreakCalendar() {
+  const markBtn = document.getElementById('mark-today-btn');
+  if (markBtn) {
+    markBtn.addEventListener('click', markToday);
+    renderCalendar();
+  }
+}
+initStreakCalendar();
