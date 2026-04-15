@@ -658,3 +658,16 @@ function initStreakCalendar() {
   }
 }
 initStreakCalendar();
+// Day 18: Copy page link button
+const copyLinkBtn = document.getElementById('copy-link-btn');
+if (copyLinkBtn) {
+  copyLinkBtn.addEventListener('click', async () => {
+    const url = window.location.href;
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast('📋 Page link copied to clipboard!', 'success');
+    } catch (err) {
+      showToast('Failed to copy link. Please try again.', 'error');
+    }
+  });
+}
