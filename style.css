@@ -1162,3 +1162,37 @@ body.light-mode .calendar-day {
   font-size: 0.8rem;
   color: #888;
 }
+/* Copy link button */
+.copy-link-btn {
+  background: none;
+  border: 1px solid #e94560;
+  color: #e94560;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 10px;
+}
+.copy-link-btn:hover {
+  background: #e94560;
+  color: white;
+}
+/* Random project button */
+.random-project-container {
+  text-align: center;
+  margin-top: 20px;
+}
+.random-project-btn {
+  background: linear-gradient(135deg, #e94560, #c73652);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 30px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.random-project-btn:hover {
+  transform: scale(1.05);
+}

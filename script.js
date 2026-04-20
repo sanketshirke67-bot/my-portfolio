@@ -671,3 +671,17 @@ if (copyLinkBtn) {
     }
   });
 }
+// Day 19: Random Project Button
+const randomBtn = document.getElementById('random-project-btn');
+if (randomBtn) {
+  randomBtn.addEventListener('click', () => {
+    if (!allRepos || allRepos.length === 0) {
+      showToast('Projects not loaded yet. Please wait.', 'error');
+      return;
+    }
+    const randomIndex = Math.floor(Math.random() * allRepos.length);
+    const randomRepo = allRepos[randomIndex];
+    window.open(randomRepo.html_url, '_blank');
+    showToast(`Opening random project: ${randomRepo.name}`, 'success');
+  });
+}
