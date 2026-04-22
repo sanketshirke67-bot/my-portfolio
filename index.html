@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Day 20 – Fixed GitHub Activity | Sanket Shirke</title>
+  <title>Day 21 – Reading Time | Sanket Shirke</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <!-- Custom Cursor -->
   <div class="cursor"></div>
   <div class="cursor-follower"></div>
 
@@ -23,6 +24,7 @@
         <li><a href="#github-activity">GitHub Activity</a></li>
         <li><a href="#blog">Blog</a></li>
         <li><a href="#testimonials">Testimonials</a></li>
+        <li><a href="#streak-calendar">Streak</a></li>
         <li><a href="#daily-log">Daily Log</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -46,7 +48,7 @@
       </div>
     </section>
 
-    <!-- About Section -->
+    <!-- About -->
     <section id="about" class="about">
       <div class="container">
         <h2>About Me</h2>
@@ -57,7 +59,7 @@
       </div>
     </section>
 
-    <!-- Skills Section -->
+    <!-- Skills -->
     <section id="skills" class="skills">
       <div class="container">
         <h2>My Skills</h2>
@@ -70,13 +72,13 @@
         <div class="stats">
           <div class="stat-item"><i class="fas fa-code"></i><span class="stat-number" data-target="15">0</span><p>Projects Completed</p></div>
           <div class="stat-item"><i class="fas fa-coffee"></i><span class="stat-number" data-target="50">0</span><p>Cups of Coffee</p></div>
-          <div class="stat-item"><i class="fas fa-calendar-alt"></i><span class="stat-number" data-target="11">0</span><p>Days of Learning</p></div>
+          <div class="stat-item"><i class="fas fa-calendar-alt"></i><span class="stat-number" data-target="21">0</span><p>Days of Learning</p></div>
           <div class="stat-item"><i class="fas fa-eye"></i><span class="stat-number" id="visitor-count">0</span><p>Visitors</p></div>
         </div>
       </div>
     </section>
 
-    <!-- Projects Section (unchanged from Day 10) -->
+    <!-- GitHub Projects -->
     <section id="projects" class="projects">
       <div class="container">
         <h2>My GitHub Projects</h2>
@@ -90,16 +92,13 @@
           </div>
         </div>
         <div id="github-projects" class="projects-grid"><div class="loader">Loading projects...</div></div>
-        <div id="last-updated-repo" class="last-updated-repo"></div>
-        <div class="load-more-container">
-  <button id="load-more-btn" class="load-more-btn" style="display: none;">Load More</button>
-</div>
         <div class="load-more-container"><button id="load-more-btn" class="load-more-btn" style="display: none;">Load More</button></div>
-        <div class="last-updated" id="last-updated"></div>
+        <div class="random-project-container"><button id="random-project-btn" class="random-project-btn">🎲 Random Project</button></div>
+        <div id="last-updated-repo" class="last-updated-repo"></div>
       </div>
     </section>
 
-    <!-- GitHub Activity Section with Repo Selector & Refresh -->
+    <!-- GitHub Activity -->
     <section id="github-activity" class="github-activity">
       <div class="container">
         <h2>GitHub Activity</h2>
@@ -112,50 +111,52 @@
           <p class="note">* If a repo has no issues/PRs, we show demo data so you can see how it looks.</p>
         </div>
         <div class="activity-grid">
-          <div class="activity-card">
-            <i class="fab fa-github"></i><h3>Pull Requests</h3>
-            <div class="activity-stats"><span>Open: <span id="pr-open">0</span></span><span>Closed: <span id="pr-closed">0</span></span></div>
-            <div class="progress-bar-container"><div class="progress-bar" id="pr-progress" style="width: 0%;"></div></div>
-            <p class="progress-label">Closed PRs</p>
-          </div>
-          <div class="activity-card">
-            <i class="fas fa-exclamation-circle"></i><h3>Issues</h3>
-            <div class="activity-stats"><span>Open: <span id="issues-open">0</span></span><span>Closed: <span id="issues-closed">0</span></span></div>
-            <div class="progress-bar-container"><div class="progress-bar" id="issues-progress" style="width: 0%;"></div></div>
-            <p class="progress-label">Closed Issues</p>
-          </div>
-          <div class="activity-card">
-            <i class="fas fa-code-branch"></i><h3>Code Review Progress</h3>
-            <div class="activity-stats"><span>Reviewed: <span id="review-reviewed">0</span></span><span>Pending: <span id="review-pending">0</span></span></div>
-            <div class="progress-bar-container"><div class="progress-bar" id="review-progress" style="width: 0%;"></div></div>
-            <p class="progress-label">PRs with at least one review</p>
-            <p class="note">* Demo data shown if no real PRs</p>
-          </div>
+          <div class="activity-card"><i class="fab fa-github"></i><h3>Pull Requests</h3><div class="activity-stats"><span>Open: <span id="pr-open">0</span></span><span>Closed: <span id="pr-closed">0</span></span></div><div class="progress-bar-container"><div class="progress-bar" id="pr-progress" style="width: 0%;"></div></div><p class="progress-label">Closed PRs</p></div>
+          <div class="activity-card"><i class="fas fa-exclamation-circle"></i><h3>Issues</h3><div class="activity-stats"><span>Open: <span id="issues-open">0</span></span><span>Closed: <span id="issues-closed">0</span></span></div><div class="progress-bar-container"><div class="progress-bar" id="issues-progress" style="width: 0%;"></div></div><p class="progress-label">Closed Issues</p></div>
+          <div class="activity-card"><i class="fas fa-code-branch"></i><h3>Code Review Progress</h3><div class="activity-stats"><span>Reviewed: <span id="review-reviewed">0</span></span><span>Pending: <span id="review-pending">0</span></span></div><div class="progress-bar-container"><div class="progress-bar" id="review-progress" style="width: 0%;"></div></div><p class="progress-label">PRs with at least one review</p><p class="note">* Based on open PRs with reviews</p></div>
         </div>
       </div>
     </section>
 
-    <!-- Blog Section -->
+    <!-- Blog Section with Reading Time -->
     <section id="blog" class="blog">
       <div class="container">
         <h2>Latest Articles</h2>
         <div class="blog-grid">
-          <article class="blog-card"><h3>How I Started My Web Dev Journey</h3><p class="blog-date">April 6, 2025</p><p>It all began with a simple "Hello World"...</p><a href="#" class="read-more">Read More →</a></article>
-          <article class="blog-card"><h3>5 CSS Tricks Every Beginner Should Know</h3><p class="blog-date">April 5, 2025</p><p>From flexbox to grid, these CSS techniques saved me hours...</p><a href="#" class="read-more">Read More →</a></article>
-          <article class="blog-card"><h3>Why I'm Documenting My Learning Daily</h3><p class="blog-date">April 4, 2025</p><p>Building in public keeps me accountable...</p><a href="#" class="read-more">Read More →</a></article>
+          <article class="blog-card">
+            <h3>How I Started My Web Dev Journey</h3>
+            <p class="blog-date">April 21, 2025</p>
+            <div class="reading-time">⏱️ <span>0</span> min read</div>
+            <p>It all began with a simple "Hello World". I remember opening my first HTML file in a browser and feeling amazed. That small spark turned into a daily habit of learning and building. From static pages to interactive portfolios, every line of code taught me something new. The journey is far from over, but looking back, I'm proud of how far I've come.</p>
+            <a href="#" class="read-more">Read More →</a>
+          </article>
+          <article class="blog-card">
+            <h3>5 CSS Tricks Every Beginner Should Know</h3>
+            <p class="blog-date">April 20, 2025</p>
+            <div class="reading-time">⏱️ <span>0</span> min read</div>
+            <p>CSS can be tricky, but mastering a few techniques can transform your designs. First, flexbox – it's a game-changer for layouts. Second, CSS Grid for complex structures. Third, custom properties (variables) to keep your code DRY. Fourth, transitions and animations for smooth interactions. Fifth, media queries for responsive design. Practice these and you'll build beautiful, adaptive websites.</p>
+            <a href="#" class="read-more">Read More →</a>
+          </article>
+          <article class="blog-card">
+            <h3>Why I'm Documenting My Learning Daily</h3>
+            <p class="blog-date">April 19, 2025</p>
+            <div class="reading-time">⏱️ <span>0</span> min read</div>
+            <p>Building in public keeps me accountable. Each day I add a small feature to my portfolio and write about it. This practice not only solidifies my knowledge but also creates a visible progress track for potential employers. Plus, it's motivating to see how many consecutive days I've worked. I recommend every learner to document their journey – you'll be surprised how much you grow.</p>
+            <a href="#" class="read-more">Read More →</a>
+          </article>
         </div>
       </div>
     </section>
 
-    <!-- Testimonials Carousel -->
+    <!-- Testimonials -->
     <section id="testimonials" class="testimonials">
       <div class="container">
         <h2>What People Say</h2>
         <div class="carousel-container">
           <div class="carousel-slide">
-            <div class="testimonial-card"><i class="fas fa-quote-left"></i><p>"Sanket is incredibly dedicated and learns fast..."</p><h4>— Jane Doe, Mentor</h4></div>
-            <div class="testimonial-card"><i class="fas fa-quote-left"></i><p>"I'm impressed by the attention to detail..."</p><h4>— John Smith, Developer</h4></div>
-            <div class="testimonial-card"><i class="fas fa-quote-left"></i><p>"The dark mode toggle and animations make this portfolio stand out..."</p><h4>— Emily Chen, Designer</h4></div>
+            <div class="testimonial-card"><i class="fas fa-quote-left"></i><p>"Sanket is incredibly dedicated and learns fast. His portfolio shows his growth every day!"</p><h4>— Jane Doe, Mentor</h4></div>
+            <div class="testimonial-card"><i class="fas fa-quote-left"></i><p>"I'm impressed by the attention to detail and the clean code. Great work!"</p><h4>— John Smith, Developer</h4></div>
+            <div class="testimonial-card"><i class="fas fa-quote-left"></i><p>"The dark mode toggle and animations make this portfolio stand out. Keep it up!"</p><h4>— Emily Chen, Designer</h4></div>
           </div>
           <button class="carousel-prev">❮</button><button class="carousel-next">❯</button>
           <div class="carousel-dots"></div>
@@ -163,77 +164,57 @@
       </div>
     </section>
 
-    <!-- Daily Learning Log (with Day 11) -->
+    <!-- Streak Calendar -->
+    <section id="streak-calendar" class="streak-calendar">
+      <div class="container">
+        <h2>🔥 My Work Streak</h2>
+        <div class="streak-stats">
+          <div class="streak-card"><i class="fas fa-fire"></i><span id="current-streak">0</span><p>Current Streak</p></div>
+          <div class="streak-card"><i class="fas fa-calendar-check"></i><span id="total-days">0</span><p>Total Days Worked</p></div>
+        </div>
+        <div id="calendar" class="calendar-grid"></div>
+        <button id="mark-today-btn" class="streak-btn">✅ Mark Today as Worked</button>
+        <p class="streak-note">* Click the button each day you work on this project. Your streak grows with consecutive days.</p>
+      </div>
+    </section>
+
+    <!-- Daily Log -->
     <section id="daily-log" class="daily-log">
       <div class="container">
         <h2>Daily Learning Log</h2>
         <div class="timeline">
-          <!-- Previous days... -->
-          <div class="timeline-item">
-            <div class="timeline-date">Day 20</div>
-            <div class="timeline-content">
-              <h3>Easter Egg: Hidden Surprise</h3>
-              <p>Click the logo 3 times fast – a secret message appears. Just for fun!.</p>
-            </div>
-          </div>
+          <div class="timeline-item"><div class="timeline-date">Day 21</div><div class="timeline-content"><h3>Reading Time for Blog Posts</h3><p>Added estimated reading time to each blog article – a small but useful UX improvement.</p></div></div>
         </div>
       </div>
     </section>
 
-    <!-- Contact Section -->
-    <!-- Contact Section with Copy Email -->
-<section id="contact" class="contact">
-  <div class="container">
-    <h2>Get In Touch</h2>
-    <form id="contact-form">
-      <input type="text" id="name" name="name" placeholder="Your Name" required />
-      <div class="email-copy-wrapper">
-        <input type="email" id="email" name="email" placeholder="Your Email" required />
-        <button type="button" id="copy-email-btn" class="copy-btn" aria-label="Copy my email">
-          <i class="fas fa-copy"></i> Copy my email
-        </button>
+    <!-- Contact -->
+    <section id="contact" class="contact">
+      <div class="container">
+        <h2>Get In Touch</h2>
+        <form id="contact-form">
+          <input type="text" id="name" placeholder="Your Name" required />
+          <div class="email-copy-wrapper">
+            <input type="email" id="email" placeholder="Your Email" required />
+            <button type="button" id="copy-email-btn" class="copy-btn"><i class="fas fa-copy"></i> Copy my email</button>
+          </div>
+          <textarea id="message" rows="5" placeholder="Your Message" required></textarea>
+          <button type="submit">Send Message</button>
+        </form>
       </div>
-      <textarea id="message" name="message" rows="5" placeholder="Your Message" required></textarea>
-      <button type="submit">Send Message</button>
-    </form>
-  </div>
-</section>
-
-<!-- Streak Calendar Section -->
-<section id="streak-calendar" class="streak-calendar">
-  <div class="container">
-    <h2>🔥 My Work Streak</h2>
-    <div class="streak-stats">
-      <div class="streak-card">
-        <i class="fas fa-fire"></i>
-        <span id="current-streak">0</span>
-        <p>Current Streak</p>
-      </div>
-      <div class="streak-card">
-        <i class="fas fa-calendar-check"></i>
-        <span id="total-days">0</span>
-        <p>Total Days Worked</p>
-      </div>
-    </div>
-    <div id="calendar" class="calendar-grid"></div>
-    <button id="mark-today-btn" class="streak-btn">✅ Mark Today as Worked</button>
-    <p class="streak-note">* Click the button each day you work on this project. Your streak grows with consecutive days.</p>
-  </div>
-</section>
+    </section>
   </main>
 
   <footer>
-  <p>&copy; 2025 Sanket Shirke. Built with ❤️ for my learning journey.</p>
-  <p id="visit-message" class="visit-message"></p>
-    <button id="copy-link-btn" class="copy-link-btn" aria-label="Copy page link">
-    🔗 Copy Link
-  </button>
-</footer>
+    <p>&copy; 2025 Sanket Shirke. Built with ❤️ for my learning journey.</p>
+    <p id="visit-message" class="visit-message"></p>
+    <button id="copy-link-btn" class="copy-link-btn">🔗 Copy Link</button>
+  </footer>
 
   <button id="back-to-top" aria-label="Back to top">↑</button>
   <div class="scroll-progress">
     <svg class="progress-ring" width="60" height="60">
-      <circle class="progress-ring-circle-bg" stroke="#333" stroke-width="4" fill="transpaft" r="26" cx="30" cy="30"/>
+      <circle class="progress-ring-circle-bg" stroke="#333" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
       <circle class="progress-ring-circle" stroke="#e94560" stroke-width="4" fill="transparent" r="26" cx="30" cy="30"/>
     </svg>
     <div class="scroll-percent">0%</div>
