@@ -1130,3 +1130,10 @@ body.light-mode .toast {
 .logo-pulse {
   animation: pulse 0.3s ease;
 }
+.project-card h3 {
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.project-card h3:hover {
+  opacity: 0.8;
+}
