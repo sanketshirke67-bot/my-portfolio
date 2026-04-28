@@ -1137,3 +1137,6 @@ body.light-mode .toast {
 .project-card h3:hover {
   opacity: 0.8;
 }
+.toast {
+  white-space: pre-line;
+}

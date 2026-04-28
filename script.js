@@ -753,3 +753,34 @@ function addReadingTimes() {
   });
 }
 addReadingTimes();
+    // Day 22: Click on repo name to copy it
+    const repoNameElem = card.querySelector('h3');
+    if (repoNameElem) {
+      repoNameElem.style.cursor = 'pointer';
+      repoNameElem.title = 'Click to copy repository name';
+      repoNameElem.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const repoName = repo.name;
+        navigator.clipboard.writeText(repoName).then(() => {
+          showToast(`📋 Copied "${repoName}" to clipboard!`, 'success');
+        }).catch(() => {
+          showToast('Failed to copy repo name.', 'error');
+        });
+      });
+    }
+    // Day 23: Keyboard shortcuts help – press '?' to display all shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.key === '?' || (e.shiftKey && e.key === '/')) {
+    e.preventDefault();
+    const shortcuts = [
+      '⌨️ Keyboard Shortcuts:',
+      '🎨 D / d – Toggle dark/light mode',
+      '❓ ? / Shift+/ – Show this help',
+      '📋 Click on any repo name – Copy it',
+      '🎲 Random Project button – Get a random repo',
+      '📧 Copy email button – Copy my address',
+      '🔗 Copy link button – Share this page'
+    ];
+    showToast(shortcuts.join('\n'), 'info');
+  }
+});
