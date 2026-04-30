@@ -784,3 +784,15 @@ document.addEventListener('keydown', (e) => {
     showToast(shortcuts.join('\n'), 'info');
   }
 });
+// Day 24: Press 'L' to copy page link
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'l' || e.key === 'L') {
+    e.preventDefault();
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+      showToast('🔗 Page link copied to clipboard!', 'success');
+    }).catch(() => {
+      showToast('Failed to copy link.', 'error');
+    });
+  }
+});
