@@ -1140,3 +1140,18 @@ body.light-mode .toast {
 .toast {
   white-space: pre-line;
 }
+/* Language badge */
+.lang-badge {
+  display: inline-block;
+  background: rgba(233, 69, 96, 0.2);
+  color: #e94560;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+body.light-mode .lang-badge {
+  background: rgba(233, 69, 96, 0.1);
+}

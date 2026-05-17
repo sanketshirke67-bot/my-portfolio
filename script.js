@@ -796,3 +796,26 @@ document.addEventListener('keydown', (e) => {
     });
   }
 });
+// Day 25: Press 'R' to open a random project
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'r' || e.key === 'R') {
+    e.preventDefault();
+    if (!allRepos || allRepos.length === 0) {
+      showToast('Projects not loaded yet. Please wait.', 'error');
+      return;
+    }
+    const randomIndex = Math.floor(Math.random() * allRepos.length);
+    const randomRepo = allRepos[randomIndex];
+    window.open(randomRepo.html_url, '_blank');
+    showToast(`🎲 Opening random project: ${randomRepo.name}`, 'success');
+  }
+});
+    card.innerHTML = `<i class="fab fa-github"></i><h3>${repo.name}</h3><p>${repo.description || 'No description provided.'}</p><a href="${repo.html_url}" target="_blank">View on GitHub →</a>`;
+    
+    // Day 26: Language badge
+    const langBadge = document.createElement('span');
+    langBadge.className = 'lang-badge';
+    langBadge.textContent = repo.language || 'Unknown';
+    card.querySelector('h3').appendChild(langBadge);
+    
+    // ... rest of the code (details, toggle button, etc.)
